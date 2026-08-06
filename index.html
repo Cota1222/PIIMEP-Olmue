@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <!--
+    ========================================================
+
+    PIIMEP Participa
+
+    Archivo:
+    index.html
+
+    Descripción:
+    Página principal de la plataforma ciudadana
+    de priorización de proyectos PIIMEP.
+
+    ========================================================
+    -->
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>PIIMEP Participa</title>
+
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <!-- Leaflet -->
+    <link 
+        rel="stylesheet" 
+        href="https://unpkg.com/leaflet/dist/leaflet.css"
+    >
+
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+
+
+<body>
+
+
+<!-- ======================================================
+PANTALLA DE INGRESO
+====================================================== -->
+
+
+<section id="pantalla-ingreso">
+
+
+    <div class="tarjeta-ingreso">
+
+
+        <div class="logo-municipal">
+
+            <img 
+                src="assets/img/logo.png" 
+                alt="Municipalidad de Olmué"
+            >
+
+        </div>
+
+
+
+        <h1>
+            PIIMEP Participa
+        </h1>
+
+
+        <p class="subtitulo">
+
+            Participa en la priorización de proyectos
+            de tu Unidad Vecinal.
+
+        </p>
+
+
+
+        <form id="formulario-ingreso">
+
+
+            <label for="nombre">
+                Nombre
+            </label>
+
+
+            <input 
+                type="text"
+                id="nombre"
+                placeholder="Ingrese su nombre"
+            >
+
+
+
+            <label for="unidad">
+
+                Unidad Vecinal
+
+            </label>
+
+
+
+            <select id="unidad">
+
+
+                <option value="">
+                    Seleccione su Unidad Vecinal
+                </option>
+
+
+                <option value="1">
+                    Unidad Vecinal 1
+                </option>
+
+
+                <option value="2">
+                    Unidad Vecinal 2
+                </option>
+
+
+                <option value="3">
+                    Unidad Vecinal 3
+                </option>
+
+
+                <option value="4">
+                    Unidad Vecinal 4
+                </option>
+
+
+                <option value="5">
+                    Unidad Vecinal 5
+                </option>
+
+
+                <option value="6">
+                    Unidad Vecinal 6
+                </option>
+
+
+                <option value="7">
+                    Unidad Vecinal 7
+                </option>
+
+
+                <option value="8">
+                    Unidad Vecinal 8
+                </option>
+
+
+                <option value="9">
+                    Unidad Vecinal 9
+                </option>
+
+
+                <option value="10">
+                    Unidad Vecinal 10
+                </option>
+
+
+            </select>
+
+
+
+
+            <button type="submit">
+
+                Ingresar
+
+            </button>
+
+
+
+        </form>
+
+
+
+    </div>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- ======================================================
+APLICACIÓN PRINCIPAL
+====================================================== -->
+
+
+<section id="aplicacion" class="oculto">
+
+
+
+    <header id="header">
+
+
+        <div>
+
+            <h1>
+                PIIMEP Participa
+            </h1>
+
+
+            <span id="usuario-activo">
+
+            </span>
+
+        </div>
+
+        <button id="cambiar-uv">
+            🔄 Cambiar Unidad Vecinal
+        </button>
+
+    </header>
+
+
+
+
+
+    <main id="contenedor">
+
+
+        <!-- PANEL LATERAL -->
+
+        <aside id="panel">
+
+
+            <div class="tarjeta-destacada">
+
+    <h2>
+        Proyectos más votados
+    </h2>
+
+
+    <div id="destacado"></div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+            <div id="proyectos">
+
+
+    <h2>
+        📋 Proyectos
+    </h2>
+
+
+    <select id="selector-proyectos">
+
+        <option value="">
+            Seleccione un proyecto
+        </option>
+
+    </select>
+
+
+</div>
+
+
+
+        </aside>
+
+
+
+
+
+
+
+        <!-- MAPA -->
+
+
+        <div id="mapa">
+
+
+    <div id="detalle-proyecto" class="oculto">
+
+
+    </div>
+    <div id="modal-voto" class="oculto">
+
+
+</div>
+<div id="modal-mensaje" class="oculto">
+
+</div>
+</div>
+
+
+
+    </main>
+
+
+
+
+</section>
+
+
+
+
+
+
+
+<!-- ======================================================
+SCRIPTS
+====================================================== -->
+
+
+<script 
+src="https://unpkg.com/leaflet/dist/leaflet.js">
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/database.js"></script>
+
+<script src="js/utils.js"></script>
+
+<script src="js/projects.js"></script>
+
+<script src="js/map.js"></script>
+
+<script src="js/ui.js"></script>
+
+<script src="js/app.js"></script>
+
+
+
+</body>
+
+
+</html>

@@ -1,0 +1,48 @@
+[
+    {
+        "id":1,
+        "nombre":"Mejoramiento Plaza Central",
+        "unidad":1,
+        "categoria":"Área verde",
+        "descripcion":"Mejoramiento del espacio público mediante nuevas áreas verdes, mobiliario urbano y recuperación del entorno.",
+        "estado":"Propuesta",
+        "lat":-33.0052,
+        "lng":-71.1845
+    },
+
+
+    {
+        "id":2,
+        "nombre":"Mejoramiento Multicancha Villa Olímpica",
+        "unidad":1,
+        "categoria":"Deporte",
+        "descripcion":"Renovación de la infraestructura deportiva para uso comunitario.",
+        "estado":"Propuesta",
+        "lat":-33.0090,
+        "lng":-71.1870
+    },
+
+
+    {
+        "id":3,
+        "nombre":"Nueva iluminación sector norte",
+        "unidad":2,
+        "categoria":"Seguridad",
+        "descripcion":"Instalación de luminarias públicas para mejorar la seguridad del sector.",
+        "estado":"Propuesta",
+        "lat":-33.0000,
+        "lng":-71.1800
+    },
+
+
+    {
+        "id":4,
+        "nombre":"Mejoramiento sede comunitaria",
+        "unidad":1,
+        "categoria":"Equipamiento",
+        "descripcion":"Mejoramiento de la infraestructura de la sede vecinal.",
+        "estado":"Propuesta",
+        "lat":-33.0065,
+        "lng":-71.1900
+    }
+]
