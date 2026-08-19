@@ -19,18 +19,15 @@ y el inicio de la plataforma.
 // VARIABLES GLOBALES
 // ======================================
 
-
 let usuarioActual = {
 
-    nombre:null,
+    nombre: null,
 
-    unidad:null,
+    direccion: null,
 
-    rut:null
+    rut: null
 
 };
-
-
 
 
 
@@ -38,31 +35,19 @@ let usuarioActual = {
 // INICIALIZAR APLICACIÓN
 // ======================================
 
-
 document.addEventListener(
-    
+
     "DOMContentLoaded",
 
     function(){
 
-
         iniciarFormulario();
 
+        controlarBotonIngresar();
 
     }
 
 );
-
-document
-.getElementById("cambiar-uv")
-.onclick = function(){
-
-    console.log("Botón cambiar UV funcionando");
-
-    cambiarUnidad();
-
-};
-
 
 
 
@@ -70,104 +55,160 @@ document
 // FORMULARIO DE INGRESO
 // ======================================
 
-
 function iniciarFormulario(){
 
+    const formulario =
+        document.getElementById(
+            "formulario-ingreso"
+        );
 
-    const formulario = document.getElementById(
-        "formulario-ingreso"
-    );
+
+    if(!formulario){
+
+        return;
+
+    }
 
 
     formulario.addEventListener(
-        
+
         "submit",
 
         function(event){
 
-
             event.preventDefault();
 
 
-
-            const nombre = document.getElementById(
-                "nombre"
-            ).value;
-
-
-
-            const unidad = document.getElementById(
-                "unidad"
-            ).value;
+            const nombre =
+                document.getElementById(
+                    "nombre"
+                ).value.trim();
 
 
+            const direccion =
+                document.getElementById(
+                    "direccion"
+                ).value.trim();
 
-            if(unidad === ""){
 
 
-                alert(
-                    "Seleccione una Unidad Vecinal"
+            // ======================================
+            // VALIDAR DATOS
+            // ======================================
+
+            if(nombre === ""){
+
+                mostrarMensaje(
+                    "⚠️ Falta información",
+                    "Ingrese su nombre para continuar."
                 );
-
 
                 return;
 
+            }
+
+
+            if(direccion === ""){
+
+                mostrarMensaje(
+                    "⚠️ Falta información",
+                    "Ingrese su dirección para continuar."
+                );
+
+                return;
 
             }
 
 
 
-            usuarioActual.nombre = nombre;
+            // ======================================
+            // GUARDAR USUARIO
+            // ======================================
 
-            usuarioActual.unidad = unidad;
+            usuarioActual.nombre =
+                nombre;
 
 
+            usuarioActual.direccion =
+                direccion;
+
+
+
+            // ======================================
+            // INGRESAR A LA PLATAFORMA
+            // ======================================
 
             ingresarPlataforma();
-
-
 
         }
 
     );
 
-
 }
 
 
 
-
-
-
 // ======================================
-// CAMBIAR A LA PLATAFORMA
+// INGRESAR A LA PLATAFORMA
 // ======================================
-
 
 function ingresarPlataforma(){
 
+    // ======================================
+    // OCULTAR PÁGINA INFORMATIVA
+    // ======================================
 
-    document
-    .getElementById(
-        "pantalla-ingreso"
-    )
-    .style.display="none";
+    const pantallaInformativa =
+        document.getElementById(
+            "pantalla-informativa"
+        );
+
+
+    if(pantallaInformativa){
+
+        pantallaInformativa.classList.add(
+            "oculto"
+        );
+
+    }
 
 
 
-    document
-    .getElementById(
-        "aplicacion"
-    )
-    .classList.remove(
+    // ======================================
+    // MOSTRAR APLICACIÓN
+    // ======================================
+
+    const aplicacion =
+        document.getElementById(
+            "aplicacion"
+        );
+
+
+    aplicacion.classList.remove(
         "oculto"
     );
 
 
 
+    // ======================================
+    // MOSTRAR USUARIO
+    // ======================================
+
     mostrarUsuario();
-    
+
+
+
+    // ======================================
+    // INICIALIZAR MAPA
+    // ======================================
+
     inicializarMapa();
+
+
+
+    // ======================================
+    // CARGAR PROYECTOS
+    // ======================================
 
     cargarProyectos();
 
@@ -175,18 +216,23 @@ function ingresarPlataforma(){
 
 
 
-
 // ======================================
 // MOSTRAR USUARIO
 // ======================================
 
-
 function mostrarUsuario(){
 
+    const elemento =
+        document.getElementById(
+            "usuario-activo"
+        );
 
-    const elemento = document.getElementById(
-        "usuario-activo"
-    );
+
+    if(!elemento){
+
+        return;
+
+    }
 
 
     elemento.innerHTML = `
@@ -194,10 +240,106 @@ function mostrarUsuario(){
         ${usuarioActual.nombre || "Vecino"}
 
         -
-        
-        Unidad Vecinal ${usuarioActual.unidad}
+
+        ${usuarioActual.direccion || ""}
 
     `;
 
+}
+
+
+
+// ======================================
+// IR AL FORMULARIO
+// ======================================
+
+function irAFormulario(){
+
+    const formulario =
+        document.getElementById(
+            "seccion-participar"
+        );
+
+
+    if(!formulario){
+
+        return;
+
+    }
+
+
+    formulario.scrollIntoView({
+
+        behavior:"smooth",
+
+        block:"start"
+
+    });
+
+}
+
+
+
+// ======================================
+// CONTROLAR BOTÓN FLOTANTE
+// ======================================
+
+function controlarBotonIngresar(){
+
+    const boton =
+        document.getElementById(
+            "boton-ingresar"
+        );
+
+
+    const formulario =
+        document.getElementById(
+            "seccion-participar"
+        );
+
+
+    if(!boton || !formulario){
+
+        return;
+
+    }
+
+
+    const observer =
+        new IntersectionObserver(
+
+            function(entries){
+
+                const visible =
+                    entries[0].isIntersecting;
+
+
+                if(visible){
+
+                    boton.classList.add(
+                        "oculto"
+                    );
+
+                }
+                else{
+
+                    boton.classList.remove(
+                        "oculto"
+                    );
+
+                }
+
+            },
+
+            {
+
+                threshold:0.25
+
+            }
+
+        );
+
+
+    observer.observe(formulario);
 
 }

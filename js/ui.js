@@ -13,71 +13,92 @@ Controla elementos visuales de la plataforma.
 */
 
 
-
 // ======================================
 // MOSTRAR DETALLE PROYECTO
 // ======================================
 
-
 async function mostrarDetalleProyecto(proyecto){
 
-
-    const detalle = document.getElementById(
-        "detalle-proyecto"
-    );
-
-    let botonVoto = `
-
-<button 
-class="boton-votar"
-onclick="abrirVotacion(${proyecto.id})">
-
-    🗳️ Votar por este proyecto
-
-</button>
-
-`;
+    const detalle =
+        document.getElementById(
+            "detalle-proyecto"
+        );
 
 
+    if(!detalle){
 
-if(usuarioActual.rut){
-
-
-    const yaVoto = await validarVoto(
-        usuarioActual.rut
-    );
-
-
-    if(yaVoto){
-
-
-        botonVoto = `
-
-        <button 
-        class="boton-votar votado"
-        disabled>
-
-             Ya participaste
-
-        </button>
-
-        `;
+        return;
 
     }
 
-}
+
+
+    // ======================================
+    // BOTÓN DE VOTACIÓN
+    // ======================================
+
+    let botonVoto = `
+
+        <button
+            class="boton-votar"
+            onclick="abrirVotacion(${proyecto.id})"
+        >
+
+            🗳️ Votar por este proyecto
+
+        </button>
+
+    `;
+
+
+
+    // ======================================
+    // VERIFICAR SI EL USUARIO YA VOTÓ
+    // ======================================
+
+    if(usuarioActual.rut){
+
+        const yaVoto =
+            await validarVoto(
+                usuarioActual.rut
+            );
+
+
+        if(yaVoto){
+
+            botonVoto = `
+
+                <button
+                    class="boton-votar votado"
+                    disabled
+                >
+
+                    Ya participaste
+
+                </button>
+
+            `;
+
+        }
+
+    }
+
+
+
+    // ======================================
+    // MOSTRAR INFORMACIÓN
+    // ======================================
 
     detalle.innerHTML = `
 
-
-        <button 
-        class="cerrar-detalle"
-        onclick="volverVistaInicial()">
+        <button
+            class="cerrar-detalle"
+            onclick="volverVistaInicial()"
+        >
 
             ✕
 
         </button>
-
 
 
         <h2>
@@ -87,23 +108,18 @@ if(usuarioActual.rut){
         </h2>
 
 
-
         <span class="categoria">
 
-            ${proyecto.categoria}
+            ${proyecto.categoria || "Proyecto"}
 
         </span>
 
 
-
-
         <p>
 
-            ${proyecto.descripcion}
+            ${proyecto.descripcion || ""}
 
         </p>
-
-
 
 
         <div class="estado">
@@ -112,39 +128,32 @@ if(usuarioActual.rut){
 
             <strong>
 
-                ${proyecto.estado}
+                ${proyecto.estado || "Propuesta"}
 
             </strong>
 
         </div>
 
 
-
         <div class="votos">
 
-            ✅ ${proyecto.votos}
-
+            ✅ ${proyecto.votos || 0}
             votos
 
         </div>
 
 
-
-
         ${botonVoto}
 
-
     `;
+
 
 
     detalle.classList.remove(
         "oculto"
     );
 
-
 }
-
-
 
 
 
@@ -152,30 +161,23 @@ if(usuarioActual.rut){
 // CERRAR DETALLE
 // ======================================
 
-
 function cerrarDetalleProyecto(){
 
-
-    const detalle = document.getElementById(
-        "detalle-proyecto"
-    );
+    const detalle =
+        document.getElementById(
+            "detalle-proyecto"
+        );
 
 
     if(detalle){
-
 
         detalle.classList.add(
             "oculto"
         );
 
-
     }
 
-
 }
-
-
-
 
 
 
@@ -183,26 +185,38 @@ function cerrarDetalleProyecto(){
 // MODAL VOTACIÓN
 // ======================================
 
-
 function abrirVotacion(idProyecto){
 
+    const proyecto =
+        proyectosUsuario.find(
 
-    const proyecto = proyectosUsuario.find(
+            p =>
+                p.id == idProyecto
 
-        p => p.id == idProyecto
-
-    );
-
+        );
 
 
-    const modal = document.getElementById(
-        "modal-voto"
-    );
+    if(!proyecto){
+
+        console.error(
+            "No se encontró el proyecto:",
+            idProyecto
+        );
+
+        return;
+
+    }
+
+
+
+    const modal =
+        document.getElementById(
+            "modal-voto"
+        );
 
 
 
     modal.innerHTML = `
-
 
         <div class="contenido-voto">
 
@@ -214,13 +228,11 @@ function abrirVotacion(idProyecto){
             </h2>
 
 
-
             <h3>
 
                 ${proyecto.nombre}
 
             </h3>
-
 
 
 
@@ -234,15 +246,10 @@ function abrirVotacion(idProyecto){
                 </label>
 
 
-
                 <input
-
                     type="text"
-
                     id="rut-votacion"
-
                     placeholder="12345678-9"
-
                 >
 
 
@@ -250,28 +257,23 @@ function abrirVotacion(idProyecto){
 
 
 
-
             <div class="botones-voto">
 
 
                 <button
+                    class="boton-confirmar"
+                    onclick="confirmarVoto(${proyecto.id})"
+                >
 
-                class="boton-confirmar"
-
-                onclick="confirmarVoto(${proyecto.id})">
-
-                     Confirmar voto
+                    Confirmar voto
 
                 </button>
 
 
-
-
                 <button
-
-                class="boton-cancelar"
-
-                onclick="cerrarVotacion()">
+                    class="boton-cancelar"
+                    onclick="cerrarVotacion()"
+                >
 
                     Cancelar
 
@@ -281,9 +283,7 @@ function abrirVotacion(idProyecto){
             </div>
 
 
-
         </div>
-
 
     `;
 
@@ -293,33 +293,31 @@ function abrirVotacion(idProyecto){
         "oculto"
     );
 
-
 }
 
 
 
-
-
-
+// ======================================
+// CERRAR MODAL VOTACIÓN
+// ======================================
 
 function cerrarVotacion(){
 
+    const modal =
+        document.getElementById(
+            "modal-voto"
+        );
 
-    const modal = document.getElementById(
-        "modal-voto"
-    );
 
+    if(modal){
 
-    modal.classList.add(
-        "oculto"
-    );
+        modal.classList.add(
+            "oculto"
+        );
 
+    }
 
 }
-
-
-
-
 
 
 
@@ -327,20 +325,32 @@ function cerrarVotacion(){
 // CONFIRMAR VOTO
 // ======================================
 
-
 async function confirmarVoto(idProyecto){
 
-
-    const rut = document.getElementById(
-        "rut-votacion"
-    ).value.trim();
-
-
+    const campoRut =
+        document.getElementById(
+            "rut-votacion"
+        );
 
 
+    if(!campoRut){
+
+        return;
+
+    }
+
+
+
+    const rut =
+        campoRut.value.trim();
+
+
+
+    // ======================================
+    // VALIDAR RUT VACÍO
+    // ======================================
 
     if(rut === ""){
-
 
         mostrarMensaje(
 
@@ -350,19 +360,17 @@ async function confirmarVoto(idProyecto){
 
         );
 
-
         return;
 
     }
 
 
 
-
-
+    // ======================================
+    // VALIDAR FORMATO RUT
+    // ======================================
 
     if(!validarRut(rut)){
-
-
 
         mostrarMensaje(
 
@@ -372,26 +380,22 @@ async function confirmarVoto(idProyecto){
 
         );
 
-
-
         return;
-
 
     }
 
 
 
+    // ======================================
+    // VERIFICAR SI YA VOTÓ
+    // ======================================
 
-
-
-    const yaVoto = await validarVoto(rut);
-
-
+    const yaVoto =
+        await validarVoto(rut);
 
 
 
     if(yaVoto){
-
 
         mostrarMensaje(
 
@@ -401,82 +405,66 @@ async function confirmarVoto(idProyecto){
 
         );
 
-
         return;
-
 
     }
 
 
 
-
-
+    // ======================================
+    // REGISTRAR VOTO
+    // ======================================
 
     try{
 
-
-
         await registrarVoto({
-
-
 
             rut:rut,
 
-
             proyecto_id:idProyecto,
-
 
             nombre:usuarioActual.nombre,
 
-
-            unidad_vecinal:usuarioActual.unidad
-
-
+            direccion:usuarioActual.direccion
 
         });
 
+
+
+        // Guardar RUT del participante
         usuarioActual.rut = rut;
 
 
 
+        // ======================================
+        // ACTUALIZAR PROYECTOS
+        // ======================================
 
         await cargarProyectos();
 
 
 
+        const proyectoActualizado =
+            proyectos.find(
+
+                p =>
+                    p.id == idProyecto
+
+            );
 
 
 
+        if(proyectoActualizado){
 
-        const proyectoActualizado = proyectos.find(
+            mostrarDetalleProyecto(
+                proyectoActualizado
+            );
 
-
-            p => p.id == idProyecto
-
-
-        );
-
-
-
-
-
-
-        mostrarDetalleProyecto(
-
-            proyectoActualizado
-
-        );
-
-
-
-
+        }
 
 
 
         cerrarVotacion();
-
-
-
 
 
 
@@ -488,19 +476,15 @@ async function confirmarVoto(idProyecto){
 
         );
 
-
-
-
-
     }
 
 
     catch(error){
 
-
-
-        console.error(error);
-
+        console.error(
+            "Error registrando voto:",
+            error
+        );
 
 
         mostrarMensaje(
@@ -511,17 +495,9 @@ async function confirmarVoto(idProyecto){
 
         );
 
-
     }
 
-
-
 }
-
-
-
-
-
 
 
 
@@ -529,22 +505,15 @@ async function confirmarVoto(idProyecto){
 // VALIDAR RUT
 // ======================================
 
-
 function validarRut(rut){
 
-
-    const formato = /^\d{7,8}-[\dkK]$/;
+    const formato =
+        /^\d{7,8}-[\dkK]$/;
 
 
     return formato.test(rut);
 
-
 }
-
-
-
-
-
 
 
 
@@ -552,26 +521,28 @@ function validarRut(rut){
 // MODAL MENSAJES
 // ======================================
 
+function mostrarMensaje(
+    titulo,
+    mensaje
+){
 
-function mostrarMensaje(titulo,mensaje){
+    const modal =
+        document.getElementById(
+            "modal-mensaje"
+        );
 
 
+    if(!modal){
 
-    const modal = document.getElementById(
+        return;
 
-        "modal-mensaje"
-
-    );
-
+    }
 
 
 
     modal.innerHTML = `
 
-
-
         <div class="contenido-mensaje">
-
 
 
             <h2>
@@ -581,8 +552,6 @@ function mostrarMensaje(titulo,mensaje){
             </h2>
 
 
-
-
             <p>
 
                 ${mensaje}
@@ -590,65 +559,60 @@ function mostrarMensaje(titulo,mensaje){
             </p>
 
 
-
-
-            <button onclick="cerrarMensaje()">
-
+            <button
+                onclick="cerrarMensaje()"
+            >
 
                 Aceptar
-
 
             </button>
 
 
-
-
         </div>
-
 
     `;
 
 
 
-
     modal.classList.remove(
-
         "oculto"
-
     );
-
 
 }
 
 
 
-
-
-
-
+// ======================================
+// CERRAR MENSAJE
+// ======================================
 
 function cerrarMensaje(){
 
+    const modal =
+        document.getElementById(
+            "modal-mensaje"
+        );
 
 
-    document
+    if(modal){
 
-    .getElementById(
+        modal.classList.add(
+            "oculto"
+        );
 
-        "modal-mensaje"
-
-    )
-
-    .classList.add(
-
-        "oculto"
-
-    );
-
+    }
 
 }
-async function verificarParticipacion(proyecto){
 
+
+
+// ======================================
+// VERIFICAR PARTICIPACIÓN
+// ======================================
+
+async function verificarParticipacion(
+    proyecto
+){
 
     if(!usuarioActual.rut){
 
@@ -658,51 +622,12 @@ async function verificarParticipacion(proyecto){
 
 
 
-    const voto = await validarVoto(
-        usuarioActual.rut
-    );
-
+    const voto =
+        await validarVoto(
+            usuarioActual.rut
+        );
 
 
     return voto;
-
-
-}
-// ======================================
-// CAMBIAR UNIDAD VECINAL
-// ======================================
-
-
-function cambiarUnidad(){
-
-
-    const aplicacion = document.getElementById(
-        "aplicacion"
-    );
-
-
-    const ingreso = document.getElementById(
-        "pantalla-ingreso"
-    );
-
-
-
-    // ocultar aplicación
-
-    aplicacion.classList.add(
-        "oculto"
-    );
-
-
-
-    // mostrar ingreso
-
-    ingreso.classList.remove(
-        "oculto"
-    );
-
-
-    ingreso.style.display = "flex";
-
 
 }

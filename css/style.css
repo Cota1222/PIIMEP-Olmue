@@ -8,7 +8,7 @@ style.css
 
 Descripción:
 Estilos generales de la plataforma ciudadana
-de priorización de proyectos PIIMEP.
+de participación y priorización de proyectos PIIMEP.
 
 ========================================================
 */
@@ -17,7 +17,6 @@ de priorización de proyectos PIIMEP.
 /* ======================================
 VARIABLES
 ====================================== */
-
 
 :root{
 
@@ -43,7 +42,6 @@ VARIABLES
 RESET GENERAL
 ====================================== */
 
-
 *{
 
     margin:0;
@@ -51,6 +49,14 @@ RESET GENERAL
     padding:0;
 
     box-sizing:border-box;
+
+}
+
+
+
+html{
+
+    scroll-behavior:smooth;
 
 }
 
@@ -70,15 +76,11 @@ body{
 
 
 
-
-
 img{
 
     max-width:100%;
 
 }
-
-
 
 
 
@@ -92,68 +94,175 @@ select{
 
 
 
-
-
 /* ======================================
-PANTALLA DE INGRESO
+ELEMENTOS OCULTOS
 ====================================== */
 
+.oculto{
 
-#pantalla-ingreso{
+    display:none !important;
+
+}
+
+
+
+/* ======================================================
+PANTALLA INFORMATIVA
+====================================================== */
+
+#pantalla-informativa{
 
     min-height:100vh;
 
-    display:flex;
+    background:var(--gris-fondo);
 
-    justify-content:center;
+}
+
+
+
+/* ======================================
+HERO
+====================================== */
+
+.hero{
+
+    min-height:480px;
+
+    display:flex;
 
     align-items:center;
 
-    padding:20px;
+    justify-content:center;
+
+    padding:60px 20px;
+
+    text-align:center;
 
     background:
 
-    linear-gradient(
+        linear-gradient(
 
-        135deg,
+            135deg,
 
-        var(--azul-oscuro),
+            var(--azul-oscuro),
 
-        var(--azul-principal)
+            var(--azul-principal)
 
-    );
+        );
+
+
+
+    color:white;
 
 }
 
 
 
-
-
-.tarjeta-ingreso{
-
-    background:var(--blanco);
+.hero-contenido{
 
     width:100%;
 
-    max-width:420px;
-
-    padding:40px;
-
-    border-radius:18px;
-
-    box-shadow:
-
-    0 15px 35px rgba(0,0,0,.15);
+    max-width:800px;
 
 }
 
 
 
+.hero .logo-municipal{
+    margin-bottom:25px;
+}
+
+.hero .logo-municipal img{
+    width:140px;
+    height:auto;
+    object-fit:contain;
+}
 
 
-.logo-municipal{
 
-    text-align:center;
+.hero h1{
+
+    font-size:46px;
+
+    margin-bottom:20px;
+
+    font-weight:700;
+
+}
+
+
+
+.hero-subtitulo{
+
+    max-width:650px;
+
+    margin:0 auto;
+
+    font-size:20px;
+
+    line-height:1.6;
+
+    font-weight:300;
+
+}
+
+
+
+/* ======================================
+CONTENIDO INFORMATIVO
+====================================== */
+
+.contenido-informativo{
+
+    width:100%;
+
+    max-width:1100px;
+
+    margin:0 auto;
+
+    padding:70px 25px 120px;
+
+}
+
+
+
+.bloque-informativo{
+
+    background:white;
+
+    padding:45px;
+
+    border-radius:20px;
+
+    margin-bottom:35px;
+
+    box-shadow:
+
+        0 5px 20px rgba(0,0,0,.06);
+
+}
+
+
+
+.bloque-informativo h2{
+
+    color:var(--azul-oscuro);
+
+    font-size:30px;
+
+    line-height:1.3;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.bloque-informativo p{
+
+    font-size:17px;
+
+    line-height:1.8;
 
     margin-bottom:20px;
 
@@ -161,29 +270,208 @@ PANTALLA DE INGRESO
 
 
 
-.logo-municipal img{
+.bloque-informativo p:last-child{
 
-    width:120px;
+    margin-bottom:0;
 
 }
 
 
 
+/* ======================================
+TARJETAS DE INICIATIVAS
+====================================== */
+
+.tarjetas-iniciativas{
+
+    display:grid;
+
+    grid-template-columns:
+
+        repeat(2,1fr);
+
+    gap:25px;
+
+    margin-top:35px;
+
+}
 
 
-.tarjeta-ingreso h1{
+
+.tarjeta-iniciativa{
+
+    border:1px solid var(--gris-borde);
+
+    border-radius:16px;
+
+    padding:30px;
+
+    background:#fafbfc;
+
+}
+
+
+
+.icono-iniciativa{
+
+    font-size:38px;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.tarjeta-iniciativa h3{
+
+    color:var(--azul-oscuro);
+
+    font-size:21px;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.tarjeta-iniciativa p{
+
+    font-size:15px;
+
+    line-height:1.7;
+
+}
+
+
+
+/* ======================================
+CONSULTA PÚBLICA
+====================================== */
+
+.consulta-publica{
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #eef6fb,
+
+            #ffffff
+
+        );
+
+}
+
+
+
+.consulta-publica h2{
+
+    color:var(--azul-principal);
+
+}
+
+
+
+.mensaje-final{
+
+    color:var(--verde-votar);
+
+    font-size:21px !important;
+
+    font-weight:700;
+
+    margin-top:30px;
+
+}
+
+
+
+/* ======================================================
+SECCIÓN PARTICIPAR
+====================================================== */
+
+.seccion-participar{
+
+    min-height:600px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:70px 20px;
+
+    scroll-margin-top:20px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--azul-oscuro),
+
+            var(--azul-principal)
+
+        );
+
+    border-radius:25px;
+
+}
+
+
+
+/* ======================================
+TARJETA DE INGRESO
+====================================== */
+
+.tarjeta-ingreso{
+
+    background:var(--blanco);
+
+    width:100%;
+
+    max-width:500px;
+
+    padding:45px;
+
+    border-radius:20px;
+
+    box-shadow:
+
+        0 15px 40px rgba(0,0,0,.2);
+
+}
+
+
+
+.tarjeta-ingreso .logo-municipal{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.tarjeta-ingreso .logo-municipal img{
+    width:100px;
+    height:auto;
+    object-fit:contain;
+}
+
+
+
+.tarjeta-ingreso h2{
 
     text-align:center;
 
     color:var(--azul-oscuro);
 
-    font-size:28px;
+    font-size:27px;
 
     margin-bottom:12px;
 
 }
-
-
 
 
 
@@ -193,7 +481,7 @@ PANTALLA DE INGRESO
 
     color:#666;
 
-    line-height:1.5;
+    line-height:1.6;
 
     margin-bottom:30px;
 
@@ -201,12 +489,9 @@ PANTALLA DE INGRESO
 
 
 
-
-
 /* ======================================
 FORMULARIO
 ====================================== */
-
 
 #formulario-ingreso{
 
@@ -217,8 +502,6 @@ FORMULARIO
     gap:10px;
 
 }
-
-
 
 
 
@@ -234,11 +517,7 @@ FORMULARIO
 
 
 
-
-
-#formulario-ingreso input,
-#formulario-ingreso select{
-
+#formulario-ingreso input{
 
     padding:14px;
 
@@ -254,28 +533,27 @@ FORMULARIO
 
 
 
-
-
-#formulario-ingreso input:focus,
-#formulario-ingreso select:focus{
-
+#formulario-ingreso input:focus{
 
     outline:none;
 
     border-color:var(--azul-principal);
 
+    box-shadow:
+
+        0 0 0 3px
+
+        rgba(0,90,156,.12);
+
 }
-
-
 
 
 
 #formulario-ingreso button{
 
-
     margin-top:20px;
 
-    padding:14px;
+    padding:15px;
 
     border:none;
 
@@ -297,10 +575,7 @@ FORMULARIO
 
 
 
-
-
 #formulario-ingreso button:hover{
-
 
     background:var(--azul-oscuro);
 
@@ -308,22 +583,79 @@ FORMULARIO
 
 
 
+/* ======================================================
+BOTÓN FLOTANTE INGRESAR
+====================================================== */
 
+#boton-ingresar{
 
-/* ======================================
-APLICACIÓN PRINCIPAL
-====================================== */
+    position:fixed;
 
+    z-index:5000;
 
-.oculto{
+    bottom:25px;
 
-    display:none;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    padding:14px 24px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:var(--azul-principal);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    box-shadow:
+
+        0 6px 20px rgba(0,0,0,.25);
+
+    transition:
+
+        transform .2s,
+
+        background .2s;
 
 }
 
 
 
+#boton-ingresar:hover{
 
+    background:var(--azul-oscuro);
+
+    transform:
+
+        translateX(-50%)
+
+        translateY(-2px);
+
+}
+
+
+
+#boton-ingresar span{
+
+    margin-left:8px;
+
+    font-size:18px;
+
+}
+
+
+
+/* ======================================================
+APLICACIÓN PRINCIPAL
+====================================================== */
 
 #aplicacion{
 
@@ -337,7 +669,9 @@ APLICACIÓN PRINCIPAL
 
 
 
-
+/* ======================================
+HEADER
+====================================== */
 
 #header{
 
@@ -351,37 +685,94 @@ APLICACIÓN PRINCIPAL
 
     align-items:center;
 
+    justify-content:flex-start;
+
+    position:relative;
+
     padding:0 25px;
 
 }
 
 
+/* ======================================
+LOGO + TÍTULO
+====================================== */
+
+.titulo-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
 
 
+.logo-piimep-app{
 
-#header h1{
+    display:block;
+
+    width:65px !important;
+
+    height:65px !important;
+
+    max-width:65 !important;
+
+    max-height:65px !important;
+
+    object-fit:contain;
+
+    flex-shrink:0;
+
+}
+
+
+.texto-header{
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+
+.texto-header h1{
+
+    margin:0;
 
     font-size:22px;
 
     color:var(--azul-oscuro);
 
+    white-space:nowrap;
+
 }
 
 
-
-
+/* ======================================
+USUARIO / DIRECCIÓN
+====================================== */
 
 #usuario-activo{
 
-    font-size:13px;
+    position:absolute;
+
+    right:25px;
+
+    bottom:7px;
+
+    font-size:14px;
 
     color:#777;
 
+    white-space:nowrap;
+
 }
 
-
-
-
+/* ======================================
+CONTENEDOR
+====================================== */
 
 #contenedor{
 
@@ -393,7 +784,9 @@ APLICACIÓN PRINCIPAL
 
 
 
-
+/* ======================================
+PANEL
+====================================== */
 
 #panel{
 
@@ -407,24 +800,31 @@ APLICACIÓN PRINCIPAL
 
     padding:25px;
 
+    text-align:center;
+
 }
 
 
 
-
+/* ======================================
+MAPA
+====================================== */
 
 #mapa{
 
     flex:1;
 
-}
-/* ======================================
-DETALLE PROYECTO
-====================================== */
+    position:relative;
 
+}
+
+
+
+/* ======================================================
+DETALLE PROYECTO
+====================================================== */
 
 #detalle-proyecto{
-
 
     position:absolute;
 
@@ -444,8 +844,7 @@ DETALLE PROYECTO
 
     box-shadow:
 
-    0 10px 30px rgba(0,0,0,.2);
-
+        0 10px 30px rgba(0,0,0,.2);
 
 }
 
@@ -473,6 +872,8 @@ DETALLE PROYECTO
 
 .categoria{
 
+    display:inline-block;
+
     background:#e8f1f8;
 
     color:var(--azul-principal);
@@ -499,7 +900,6 @@ DETALLE PROYECTO
 
 .boton-votar{
 
-
     width:100%;
 
     padding:12px;
@@ -522,7 +922,6 @@ DETALLE PROYECTO
 
 .cerrar-detalle{
 
-
     position:absolute;
 
     right:15px;
@@ -537,12 +936,13 @@ DETALLE PROYECTO
 
     font-size:18px;
 
-
 }
-/* ======================================
-PROYECTO DESTACADO
-====================================== */
 
+
+
+/* ======================================================
+PROYECTOS DESTACADOS
+====================================================== */
 
 .tarjeta-destacada{
 
@@ -555,7 +955,8 @@ PROYECTO DESTACADO
     margin-bottom:20px;
 
     box-shadow:
-    0 5px 15px rgba(0,0,0,0.12);
+
+        0 5px 15px rgba(0,0,0,.12);
 
 }
 
@@ -563,9 +964,21 @@ PROYECTO DESTACADO
 
 .tarjeta-destacada h2{
 
-    font-size:18px;
+    font-size:22px;
 
-    margin-bottom:12px;
+    text-align:center;
+
+    color:var(--azul-oscuro);
+
+    margin-bottom:18px;
+
+}
+
+
+
+#destacado{
+
+    cursor:pointer;
 
 }
 
@@ -573,9 +986,15 @@ PROYECTO DESTACADO
 
 #destacado h3{
 
-    margin:0;
+    font-size:18px;
 
-    font-size:20px;
+    text-align:center;
+
+    color:var(--texto);
+
+    line-height:1.4;
+
+    margin-bottom:12px;
 
 }
 
@@ -583,219 +1002,29 @@ PROYECTO DESTACADO
 
 #destacado p{
 
-    margin-top:10px;
-
-    font-weight:600;
-
-}
-#destacado{
-
-    cursor:pointer;
-
-}
-/* ======================================
-MODAL VOTACIÓN
-====================================== */
-
-
-#modal-voto{
-
-
-    position:absolute;
-
-    z-index:2000;
-
-    top:50%;
-
-    left:50%;
-
-    transform:translate(-50%,-50%);
-
-}
-
-
-
-.contenido-voto{
-
-
-    background:white;
-
-    padding:25px;
-
-    border-radius:15px;
-
-    width:320px;
-
     text-align:center;
 
-    box-shadow:
-    0 10px 30px rgba(0,0,0,.25);
+    font-size:16px;
 
+    color:var(--verde-votar);
 
-}
-
-
-
-/* ======================================
-INPUT RUT MODAL
-====================================== */
-
-
-.contenido-voto input{
-
-
-    flex:1;
-
-    padding:13px;
-
-    border:1px solid var(--gris-borde);
-
-    border-radius:10px;
-
-    font-size:15px;
-
-    background:white;
-
-    color:var(--texto);
-
-
-}
-
-
-
-.contenido-voto input:focus{
-
-
-    outline:none;
-
-    border-color:var(--azul-principal);
-
-    box-shadow:
-
-    0 0 0 3px rgba(0,90,156,.15);
-
-
-}
-
-/* ======================================
-BOTONES MODAL VOTACIÓN
-====================================== */
-
-
-.contenido-voto button{
-
-
-    width:100%;
-
-    padding:13px;
+    font-weight:700;
 
     margin-top:10px;
 
-    border:none;
-
-    border-radius:10px;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.2s;
-
-
 }
 
 
-
-/* Confirmar voto */
-
-.contenido-voto button:first-of-type{
-
-
-    background:var(--verde-votar);
-
-    color:white;
-
-
-}
-
-
-
-.contenido-voto button:first-of-type:hover{
-
-
-    background:#1b5e20;
-
-}
-
-
-
-/* Cancelar */
-
-.contenido-voto button:last-of-type{
-
-
-    background:#e51010;
-
-    color:#ffffff;
-
-
-}
-
-
-
-.contenido-voto button:last-of-type:hover{
-
-
-    background:#dddddd;
-
-
-}
 
 /* ======================================
-MODAL MENSAJES
+LISTADO PROYECTOS
 ====================================== */
 
+#proyectos h2{
 
-#modal-mensaje{
-
-    position:absolute;
-
-    z-index:3000;
-
-    top:50%;
-
-    left:50%;
-
-    transform:translate(-50%,-50%);
-
-}
-
-
-
-.contenido-mensaje{
-
-
-    background:white;
-
-    width:320px;
-
-    padding:30px;
-
-    border-radius:15px;
+    font-size:20px;
 
     text-align:center;
-
-    box-shadow:
-    0 10px 30px rgba(0,0,0,.25);
-
-
-}
-
-
-
-.contenido-mensaje h2{
 
     color:var(--azul-oscuro);
 
@@ -805,44 +1034,7 @@ MODAL MENSAJES
 
 
 
-.contenido-mensaje p{
-
-    margin-bottom:20px;
-
-    line-height:1.5;
-
-}
-
-
-
-.contenido-mensaje button{
-
-
-    width:100%;
-
-    padding:12px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:var(--azul-principal);
-
-    color:white;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-
-}
-/* ======================================
-SELECTOR PROYECTOS
-====================================== */
-
-
 #selector-proyectos{
-
 
     width:100%;
 
@@ -862,16 +1054,13 @@ SELECTOR PROYECTOS
 
     cursor:pointer;
 
-
 }
 
 
 
 #selector-proyectos:hover{
 
-
     border-color:var(--azul-principal);
-
 
 }
 
@@ -879,6 +1068,169 @@ SELECTOR PROYECTOS
 
 #selector-proyectos:focus{
 
+    outline:none;
+
+    border-color:var(--azul-principal);
+
+    box-shadow:
+
+        0 0 0 3px
+
+        rgba(0,90,156,.15);
+
+}
+
+
+
+/* ======================================================
+RANKING
+====================================================== */
+
+.ranking-item{
+
+    background:white;
+
+    padding:15px;
+
+    margin-top:12px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    box-shadow:
+
+        0 4px 12px rgba(0,0,0,.08);
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+
+
+.ranking-numero{
+
+    width:24px;
+
+    height:24px;
+
+    min-width:24px;
+
+    background:#040d62;
+
+    color:white;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:16px;
+
+    font-weight:700;
+
+}
+
+
+
+.ranking-contenido{
+
+    flex:1;
+
+}
+
+
+
+.ranking-contenido h3{
+
+    margin:0;
+
+    font-size:16px;
+
+}
+
+
+
+.ranking-contenido p{
+
+    margin:8px 0 0 0;
+
+    font-weight:600;
+
+}
+
+
+
+/* ======================================================
+MODAL VOTACIÓN
+====================================================== */
+
+#modal-voto{
+
+    position:absolute;
+
+    z-index:2000;
+
+    top:50%;
+
+    left:50%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+}
+
+
+
+.contenido-voto{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    width:320px;
+
+    text-align:center;
+
+    box-shadow:
+
+        0 10px 30px rgba(0,0,0,.25);
+
+}
+
+
+
+.contenido-voto input{
+
+    flex:1;
+
+    padding:13px;
+
+    border:1px solid var(--gris-borde);
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    background:white;
+
+    color:var(--texto);
+
+}
+
+
+
+.contenido-voto input:focus{
 
     outline:none;
 
@@ -886,87 +1238,12 @@ SELECTOR PROYECTOS
 
     box-shadow:
 
-    0 0 0 3px rgba(0,90,156,.15);
+        0 0 0 3px
 
-
-}
-/* ======================================
-AJUSTES PANEL LATERAL
-====================================== */
-
-
-#panel{
-
-    text-align:center;
+        rgba(0,90,156,.15);
 
 }
 
-
-/* Título Proyecto destacado */
-
-.tarjeta-destacada h2{
-
-    font-size:22px;
-
-    text-align:center;
-
-    color:var(--azul-oscuro);
-
-    margin-bottom:18px;
-
-}
-
-
-/* Nombre del proyecto */
-
-#destacado h3{
-
-    font-size:18px;
-
-    text-align:center;
-
-    color:var(--texto);
-
-    line-height:1.4;
-
-    margin-bottom:12px;
-
-}
-
-
-/* Cantidad de votos */
-
-#destacado p{
-
-    text-align:center;
-
-    font-size:16px;
-
-    color:var(--verde-votar);
-
-    font-weight:700;
-
-    margin-top:10px;
-
-}
-
-
-/* Título lista proyectos */
-
-#proyectos h2{
-
-    font-size:20px;
-
-    text-align:center;
-
-    color:var(--azul-oscuro);
-
-    margin-bottom:15px;
-
-}
-/* ======================================
-CAMPO RUT MODAL
-====================================== */
 
 
 .campo-rut{
@@ -995,11 +1272,66 @@ CAMPO RUT MODAL
 
 
 
-.campo-rut input{
+.contenido-voto button{
 
-    flex:1;
+    width:100%;
+
+    padding:13px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
 
 }
+
+
+
+.contenido-voto button:first-of-type{
+
+    background:var(--verde-votar);
+
+    color:white;
+
+}
+
+
+
+.contenido-voto button:first-of-type:hover{
+
+    background:#1b5e20;
+
+}
+
+
+
+.contenido-voto button:last-of-type{
+
+    background:#e51010;
+
+    color:#ffffff;
+
+}
+
+
+
+.contenido-voto button:last-of-type:hover{
+
+    background:#c90000;
+
+}
+
+
+
 .votado{
 
     background:#4CAF50;
@@ -1009,152 +1341,96 @@ CAMPO RUT MODAL
     opacity:.85;
 
 }
-#cambiar-uv{
 
 
-    background:white;
 
-    color:var(--azul-principal);
+/* ======================================================
+MODAL MENSAJES
+====================================================== */
 
-    border:1px solid var(--azul-principal);
+#modal-mensaje{
 
-    padding:10px 16px;
+    position:absolute;
 
-    border-radius:10px;
+    z-index:3000;
 
-    cursor:pointer;
+    top:50%;
 
-    font-weight:600;
+    left:50%;
 
+    transform:
+
+        translate(-50%,-50%);
 
 }
 
 
 
-#cambiar-uv:hover{
+.contenido-mensaje{
 
+    background:white;
+
+    width:320px;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    box-shadow:
+
+        0 10px 30px rgba(0,0,0,.25);
+
+}
+
+
+
+.contenido-mensaje h2{
+
+    color:var(--azul-oscuro);
+
+    margin-bottom:15px;
+
+}
+
+
+
+.contenido-mensaje p{
+
+    margin-bottom:20px;
+
+    line-height:1.5;
+
+}
+
+
+
+.contenido-mensaje button{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
 
     background:var(--azul-principal);
 
     color:white;
 
-
-}
-#header{
-
-    justify-content:space-between;
-
-}
-
-
-.titulo-header{
-
-    display:flex;
-
-    flex-direction:column;
-
-}
-.ranking-item{
-
-
-    background:white;
-
-    padding:15px;
-
-
-    margin-top:12px;
-
-
-    border-radius:12px;
+    font-weight:600;
 
     cursor:pointer;
 
-    box-shadow:
-    0 4px 12px rgba(0,0,0,0.08);
-
-
-    display:flex;
-
-    align-items:center;
-
-
-    gap:15px;
-
-
 }
 
 
 
-.ranking-numero{
-
-
-    width:24px;
-
-    height:24px;
-
-    min-width:24px;
-
-
-    background:#040d62;
-
-    color:white;
-
-
-    border-radius:50%;
-
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-
-    font-size:18px;
-
-    font-weight:700;
-
-
-}
-
-
-
-.ranking-contenido{
-
-
-    flex:1;
-
-
-}
-
-
-
-.ranking-contenido h3{
-
-
-    margin:0;
-
-    font-size:16px;
-
-
-}
-
-
-
-.ranking-contenido p{
-
-
-    margin:8px 0 0 0;
-
-    font-weight:600;
-
-
-}
-
-/* ======================================
-   CONTROLES LEAFLET DERECHA
-====================================== */
-
+/* ======================================================
+CONTROLES LEAFLET DERECHA
+====================================================== */
 
 .leaflet-top.leaflet-right{
 
@@ -1167,6 +1443,7 @@ CAMPO RUT MODAL
 }
 
 
+
 .leaflet-control-layers{
 
     order:1;
@@ -1174,10 +1451,344 @@ CAMPO RUT MODAL
 }
 
 
+
 .leaflet-control-zoom{
 
     order:2;
 
     margin-top:10px;
+
+}
+
+
+
+/* ======================================================
+RESPONSIVE
+====================================================== */
+
+@media(max-width:768px){
+
+
+    /* ======================================
+    HERO
+    ====================================== */
+
+    .hero{
+
+        min-height:430px;
+
+        padding:45px 20px;
+
+    }
+
+
+
+    .hero .logo-municipal img{
+
+        width:110px;
+
+    }
+
+
+
+    .hero h1{
+
+        font-size:34px;
+
+    }
+
+
+
+    .hero-subtitulo{
+
+        font-size:17px;
+
+    }
+
+
+
+    /* ======================================
+    CONTENIDO
+    ====================================== */
+
+    .contenido-informativo{
+
+        padding:
+
+            35px
+
+            15px
+
+            100px;
+
+    }
+
+
+
+    .bloque-informativo{
+
+        padding:28px 22px;
+
+        border-radius:16px;
+
+    }
+
+
+
+    .bloque-informativo h2{
+
+        font-size:24px;
+
+    }
+
+
+
+    .bloque-informativo p{
+
+        font-size:16px;
+
+        line-height:1.7;
+
+    }
+
+
+
+    /* ======================================
+    TARJETAS
+    ====================================== */
+
+    .tarjetas-iniciativas{
+
+        grid-template-columns:1fr;
+
+        gap:18px;
+
+    }
+
+
+
+    .tarjeta-iniciativa{
+
+        padding:25px;
+
+    }
+
+
+
+    /* ======================================
+    PARTICIPACIÓN
+    ====================================== */
+
+    .seccion-participar{
+
+        min-height:550px;
+
+        padding:40px 15px;
+
+        border-radius:18px;
+
+    }
+
+
+
+    .tarjeta-ingreso{
+
+        padding:30px 22px;
+
+    }
+
+
+
+    .tarjeta-ingreso h2{
+
+        font-size:24px;
+
+    }
+
+
+
+    /* ======================================
+    BOTÓN FLOTANTE
+    ====================================== */
+
+    #boton-ingresar{
+
+        width:
+
+            calc(100% - 30px);
+
+        max-width:400px;
+
+        bottom:15px;
+
+    }
+
+
+
+    /* ======================================
+    APLICACIÓN / MAPA
+    ====================================== */
+
+    #header{
+
+        padding:0 15px;
+
+        height:65px;
+
+    }
+
+
+
+    #header h1{
+
+        font-size:18px;
+
+    }
+
+
+
+    #contenedor{
+
+        flex-direction:column;
+
+    }
+
+
+
+    #panel{
+
+        width:100%;
+
+        height:300px;
+
+        border-right:none;
+
+        border-bottom:
+
+            1px solid
+
+            var(--gris-borde);
+
+        padding:15px;
+
+        order:1;
+
+    }
+
+
+
+    #mapa{
+
+        min-height:calc(
+
+            100vh - 365px
+
+        );
+
+        order:2;
+
+    }
+
+
+
+    #detalle-proyecto{
+
+        top:10px;
+
+        left:10px;
+
+        right:10px;
+
+        width:auto;
+
+        max-width:none;
+
+    }
+
+}
+.logo-piimep-inicio{
+
+    width:170px;
+
+    height:auto;
+
+    object-fit:contain;
+
+}
+/* ======================================================
+   ICONO PARADERO
+   ====================================================== */
+
+.icono-paradero{
+
+    background:none;
+
+    border:none;
+
+}
+
+
+/* ======================================================
+   SEÑAL
+   ====================================================== */
+
+.paradero-senal{
+
+    width:21px;
+
+    height:27px;
+
+    background:#005A9C;
+
+    border-radius:3px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:0;
+
+    box-shadow:
+        0 1px 3px rgba(0,0,0,.25);
+
+}
+
+
+/* ======================================================
+   BUS
+   ====================================================== */
+
+.icono-bus{
+
+    width:15px;
+
+    height:15px;
+
+    display:block;
+
+}
+
+
+/* ======================================================
+   NÚMERO
+   ====================================================== */
+
+.numero-paradero{
+
+    color:white;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    line-height:9px;
+
+    text-align:center;
+
+    white-space:nowrap;
 
 }

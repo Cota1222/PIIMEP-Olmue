@@ -15,8 +15,8 @@ Carga y administra los proyectos PIIMEP.
 
 let proyectos = [];
 
-let proyectosUsuario = [];
 
+let proyectosUsuario = [];
 
 
 
@@ -24,13 +24,11 @@ let proyectosUsuario = [];
 // CARGAR PROYECTOS
 // ======================================
 
-
 async function cargarProyectos(){
 
-
     const { data, error } = await supabaseClient
-    .from("Proyectos")
-    .select("*");
+        .from("Proyectos")
+        .select("*");
 
 
     if(error){
@@ -45,96 +43,119 @@ async function cargarProyectos(){
     }
 
 
+
     proyectos = data.map(proyecto => {
 
-    return {
+        return {
 
-        ...proyecto,
+            ...proyecto,
 
-        lng: proyecto.long
+            lng: proyecto.long
 
-    };
+        };
 
-});
+    });
+
 
 
     await cargarVotos();
 
 
-    filtrarProyectos();
-
+    mostrarTodosLosProyectos();
 
 }
 
+
+
+// ======================================
+// CARGAR VOTOS
+// ======================================
+
 async function cargarVotos(){
 
-
     const { data, error } = await supabaseClient
-    .from("Votos")
-    .select("proyecto_id");
+        .from("Votos")
+        .select("proyecto_id");
 
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Error cargando votos:",
+            error
+        );
 
         return;
 
     }
 
-console.log(
-    "Votos desde Supabase:",
-    data
-);
 
-    proyectos.forEach(proyecto => {
-
-
-        proyecto.votos = data.filter(
-
-            voto => voto.proyecto_id == proyecto.id
-
-        ).length;
-
-
-    });
-
-
-}
-
-
-
-// ======================================
-// FILTRAR POR UNIDAD VECINAL
-// ======================================
-
-
-function filtrarProyectos(){
-
-
-    proyectosUsuario = proyectos.filter(
-
-        proyecto =>
-
-        proyecto.unidad == usuarioActual.unidad
-
-    );
-
-if(proyectosUsuario.length === 0){
 
     console.log(
-        "No existen proyectos para esta Unidad Vecinal"
+        "Votos desde Supabase:",
+        data
+    );
+
+
+
+    proyectos.forEach(
+
+        proyecto => {
+
+            proyecto.votos = data.filter(
+
+                voto =>
+                    voto.proyecto_id == proyecto.id
+
+            ).length;
+
+        }
+
     );
 
 }
+
+
+
+// ======================================
+// MOSTRAR TODOS LOS PROYECTOS
+// ======================================
+
+function mostrarTodosLosProyectos(){
+
+    /*
+    ====================================================
+    Antes:
+    proyectosUsuario se filtraba por Unidad Vecinal.
+
+    Ahora:
+    todos los proyectos de la comuna están disponibles
+    para el usuario.
+    ====================================================
+    */
+
+
+    proyectosUsuario = [...proyectos];
+
+
+
+    if(proyectosUsuario.length === 0){
+
+        console.log(
+            "No existen proyectos disponibles."
+        );
+
+    }
+
+
 
     mostrarProyectosMasVotados();
 
+
     mostrarProyectos();
 
+
     agregarProyectosMapa();
-
-
 
 }
 
@@ -144,13 +165,19 @@ if(proyectosUsuario.length === 0){
 // LISTADO LATERAL
 // ======================================
 
-
 function mostrarProyectos(){
-
 
     const selector = document.getElementById(
         "selector-proyectos"
     );
+
+
+    if(!selector){
+
+        return;
+
+    }
+
 
 
     selector.innerHTML = `
@@ -167,24 +194,23 @@ function mostrarProyectos(){
 
         proyecto => {
 
+            const opcion =
+                document.createElement(
+                    "option"
+                );
 
-            const opcion = document.createElement(
-                "option"
-            );
 
-
-            opcion.value = proyecto.id;
+            opcion.value =
+                proyecto.id;
 
 
             opcion.textContent =
-            proyecto.nombre;
-
+                proyecto.nombre;
 
 
             selector.appendChild(
                 opcion
             );
-
 
         }
 
@@ -194,16 +220,13 @@ function mostrarProyectos(){
 
     selector.onchange = function(){
 
-
         const id = this.value;
 
 
 
         if(id === ""){
 
-
             volverVistaInicial();
-
 
             return;
 
@@ -211,42 +234,40 @@ function mostrarProyectos(){
 
 
 
-        const proyecto = proyectosUsuario.find(
+        const proyecto =
+            proyectosUsuario.find(
 
-            p => p.id == id
+                p =>
+                    p.id == id
 
-        );
+            );
 
 
 
         if(proyecto){
 
-
             seleccionarProyecto(
-
                 proyecto
-
             );
-
 
         }
 
-
     };
 
-
 }
-// ======================================
-// PROYECTO DESTACADO
-// ======================================
 
+
+
+// ======================================
+// TOP 5 PROYECTOS MÁS VOTADOS
+// ======================================
 
 function mostrarProyectosMasVotados(){
 
-
-    const contenedor = document.getElementById(
-        "destacado"
-    );
+    const contenedor =
+        document.getElementById(
+            "destacado"
+        );
 
 
     if(!contenedor){
@@ -259,7 +280,6 @@ function mostrarProyectosMasVotados(){
 
     if(proyectosUsuario.length === 0){
 
-
         contenedor.innerHTML = `
 
             <p>
@@ -268,95 +288,98 @@ function mostrarProyectosMasVotados(){
 
         `;
 
-
         return;
 
     }
 
 
 
+    /*
+    ====================================================
+    ORDENAR TODOS LOS PROYECTOS
+    POR CANTIDAD DE VOTOS
+    ====================================================
+    */
 
     const ranking = [...proyectosUsuario]
 
-    .sort(
+        .sort(
 
-        (a,b)=>b.votos-a.votos
+            (a,b) =>
+                (b.votos || 0) -
+                (a.votos || 0)
 
-    )
+        )
 
-    .slice(0,3);
-
-
+        .slice(0,5);
 
 
 
     contenedor.innerHTML = ranking.map(
 
-        (proyecto,index)=>{
+        (proyecto,index) => {
+
+            const posicion =
+                index + 1;
 
 
-            let posicion = index + 1;
+            return `
+
+                <div
+                    class="ranking-item"
+                    onclick="abrirProyectoRanking(${proyecto.id})"
+                >
+
+                    <div class="ranking-numero">
+
+                        ${posicion}
+
+                    </div>
 
 
+                    <div class="ranking-contenido">
 
-           return `
+                        <h3>
 
+                            ${proyecto.nombre}
 
-<div class="ranking-item"
-onclick="abrirProyectoRanking(${proyecto.id})">
-
-
-    <div class="ranking-numero">
-
-        ${posicion}
-
-    </div>
+                        </h3>
 
 
+                        <p>
 
-    <div class="ranking-contenido">
+                            ✅ ${proyecto.votos || 0}
+                            votos
 
+                        </p>
 
-        <h3>
+                    </div>
 
-            ${proyecto.nombre}
+                </div>
 
-        </h3>
-
-
-        <p>
-
-            ✅ ${proyecto.votos}
-
-            votos
-
-        </p>
-
-
-    </div>
-
-
-</div>
-
-
-`;
-
+            `;
 
         }
 
     ).join("");
 
-
-
 }
+
+
+
+// ======================================
+// ABRIR PROYECTO DESDE EL RANKING
+// ======================================
+
 function abrirProyectoRanking(id){
 
+    const proyecto =
+        proyectosUsuario.find(
 
-    const proyecto = proyectosUsuario.find(
+            p =>
+                p.id == id
 
-        p => p.id == id
-
-    );
+        );
 
 
     if(proyecto){
@@ -366,6 +389,5 @@ function abrirProyectoRanking(id){
         );
 
     }
-
 
 }

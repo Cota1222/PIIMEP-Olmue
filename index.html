@@ -13,187 +13,397 @@
 
     Descripción:
     Página principal de la plataforma ciudadana
-    de priorización de proyectos PIIMEP.
+    de participación y priorización de proyectos PIIMEP.
 
     ========================================================
     -->
 
-
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>PIIMEP Participa</title>
 
 
     <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
 
     <!-- Leaflet -->
-    <link 
-        rel="stylesheet" 
+
+    <link
+        rel="stylesheet"
         href="https://unpkg.com/leaflet/dist/leaflet.css"
     >
 
 
     <!-- CSS principal -->
-    <link rel="stylesheet" href="css/style.css">
 
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
 </head>
-
 
 
 <body>
 
 
 <!-- ======================================================
-PANTALLA DE INGRESO
+PÁGINA INFORMATIVA
 ====================================================== -->
 
-
-<section id="pantalla-ingreso">
-
-
-    <div class="tarjeta-ingreso">
+<section id="pantalla-informativa">
 
 
-        <div class="logo-municipal">
+    <!-- ======================================
+    ENCABEZADO
+    ====================================== -->
 
-            <img 
-                src="assets/img/logo.png" 
-                alt="Municipalidad de Olmué"
-            >
+    <header class="hero">
+
+        <div class="hero-contenido">
+
+            <div class="logo-municipal">
+
+                <img
+                    src="asstes/image/Logo Olmue.png"
+                    alt="Municipalidad de Olmué"
+                >
+
+            </div>
+
+
+         <div class="titulo-con-logo">
+
+    <h1>
+        PIIMEP - Olmué
+    </h1>
+
+    <img
+        src="asstes/image/LOGO PIIMEP 2 w.png"
+        alt="Logo PIIMEP"
+        class="logo-piimep-inicio"
+    >
+
+</div>
+
+            <p class="hero-subtitulo">
+
+                Participa en la planificación y priorización
+                de los proyectos que ayudarán a mejorar
+                Olmué.
+
+            </p>
 
         </div>
 
-
-
-        <h1>
-            PIIMEP Participa
-        </h1>
-
-
-        <p class="subtitulo">
-
-            Participa en la priorización de proyectos
-            de tu Unidad Vecinal.
-
-        </p>
+    </header>
 
 
 
-        <form id="formulario-ingreso">
+    <!-- ======================================
+    INFORMACIÓN PIIMEP
+    ====================================== -->
+
+    <main class="contenido-informativo">
 
 
-            <label for="nombre">
-                Nombre
-            </label>
+        <section class="bloque-informativo">
+
+            <h2>
+                ¿Qué es el Plan de Inversiones en
+                Infraestructura de Movilidad y Espacio
+                Público (PIIMEP) de Olmué?
+            </h2>
 
 
-            <input 
-                type="text"
-                id="nombre"
-                placeholder="Ingrese su nombre"
-            >
+            <p>
+
+                El PIIMEP es una herramienta de planificación
+                que permite definir y priorizar proyectos
+                destinados a mejorar la movilidad y los
+                espacios públicos del <strong>área urbana de Olmué.</strong>
+
+            </p>
 
 
+            <p>
 
-            <label for="unidad">
+                La Ley N.º 20.958 de Aportes al Espacio
+                Público establece que los proyectos
+                inmobiliarios que generan crecimiento urbano
+                deben realizar aportes al espacio público,
+                recursos que permiten financiar las iniciativas
+                incorporadas en este Plan.
 
-                Unidad Vecinal
-
-            </label>
-
-
-
-            <select id="unidad">
-
-
-                <option value="">
-                    Seleccione su Unidad Vecinal
-                </option>
+            </p>
 
 
-                <option value="1">
-                    Unidad Vecinal 1
-                </option>
+            <p>
 
+                En Olmué, el PIIMEP se construye articulando
+                los instrumentos de planificación comunal,
+                el diagnóstico territorial, las iniciativas de
+                inversión y la participación de la comunidad,
+                con el propósito de orientar las inversiones
+                hacia un área urbana más conectada, accesible,
+                sostenible y con mejores espacios públicos.
 
-                <option value="2">
-                    Unidad Vecinal 2
-                </option>
+            </p>
 
-
-                <option value="3">
-                    Unidad Vecinal 3
-                </option>
-
-
-                <option value="4">
-                    Unidad Vecinal 4
-                </option>
-
-
-                <option value="5">
-                    Unidad Vecinal 5
-                </option>
-
-
-                <option value="6">
-                    Unidad Vecinal 6
-                </option>
-
-
-                <option value="7">
-                    Unidad Vecinal 7
-                </option>
-
-
-                <option value="8">
-                    Unidad Vecinal 8
-                </option>
-
-
-                <option value="9">
-                    Unidad Vecinal 9
-                </option>
-
-
-                <option value="10">
-                    Unidad Vecinal 10
-                </option>
-
-
-            </select>
+        </section>
 
 
 
+        <!-- ======================================
+        TIPOS DE INICIATIVAS
+        ====================================== -->
 
-            <button type="submit">
+        <section class="bloque-informativo">
 
-                Ingresar
-
-            </button>
-
-
-
-        </form>
-
+            <h2>
+                ¿Qué tipos de iniciativas contempla?
+            </h2>
 
 
-    </div>
+            <p>
+
+                El PIIMEP contempla proyectos orientados
+                a mejorar la movilidad sustentable y la
+                calidad de los espacios públicos y áreas
+                verdes de Olmué.
+
+            </p>
+
+
+
+            <div class="tarjetas-iniciativas">
+
+
+                <article class="tarjeta-iniciativa">
+
+                    <div class="icono-iniciativa">
+                        🚶
+                    </div>
+
+
+                    <h3>
+                        Movilidad Sustentable
+                    </h3>
+
+
+                    <p>
+
+                        Proyectos como mejoramiento de veredas
+                        y circulaciones peatonales, cruces
+                        seguros, ciclovías, paraderos, calles,
+                        señalización, iluminación y medidas de
+                        seguridad vial, que permitan desplazarnos
+                        de manera más segura y accesible.
+
+                    </p>
+
+                </article>
+
+
+
+                <article class="tarjeta-iniciativa">
+
+                    <div class="icono-iniciativa">
+                        🌳
+                    </div>
+
+
+                    <h3>
+                        Espacios Públicos y Áreas Verdes
+                    </h3>
+
+
+                    <p>
+
+                        Proyectos de plazas, parques, áreas
+                        verdes, espacios de encuentro, juegos
+                        infantiles, mobiliario urbano e
+                        iluminación, destinados a mejorar
+                        la calidad, accesibilidad y uso de
+                        los espacios públicos de la comuna.
+
+                    </p>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+        CONSULTA PÚBLICA
+        ====================================== -->
+
+        <section class="bloque-informativo consulta-publica">
+
+            <h2>
+                Consulta Pública:
+                ¿Por qué tu opinión es clave?
+            </h2>
+
+
+            <p>
+
+                Entre el <strong>2 de noviembre</strong> y el
+                <strong>1 de diciembre</strong> podrás participar
+                en la Consulta Pública del PIIMEP de Olmué.
+
+            </p>
+
+
+            <p>
+
+                Tu opinión nos permitirá conocer qué proyectos
+                y necesidades consideras más importantes para
+                mejorar la movilidad, los espacios públicos
+                y las áreas verdes de tu sector.
+
+            </p>
+
+
+            <p class="mensaje-final">
+
+                ¡Participa y sé parte de la planificación
+                de Olmué!
+
+            </p>
+
+        </section>
+
+
+
+        <!-- ======================================
+        SECCIÓN PARTICIPACIÓN
+        ====================================== -->
+
+        <section
+            id="seccion-participar"
+            class="seccion-participar"
+        >
+
+
+            <div class="tarjeta-ingreso">
+
+
+                <div class="logo-municipal">
+
+                    <img
+                        src="asstes/image/Logo Olmue.png"
+                        alt="Municipalidad de Olmué"
+                    >
+
+                </div>
+
+
+                <h2>
+                    Participa en la Consulta Pública
+                </h2>
+
+
+                <p class="subtitulo">
+
+                    Ingresa tus datos para conocer y
+                    priorizar los proyectos PIIMEP
+                    de la comuna.
+
+                </p>
+
+
+
+                <form id="formulario-ingreso">
+
+
+                    <label for="nombre">
+                        Nombre
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ingrese su nombre"
+                        required
+                    >
+
+
+
+                    <label for="direccion">
+                        Dirección
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="direccion"
+                        placeholder="Ingrese su dirección"
+                        required
+                    >
+
+
+
+                    <button type="submit">
+                        Participar
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ======================================
+    BOTÓN FLOTANTE
+    ====================================== -->
+
+    <button
+        id="boton-ingresar"
+        onclick="irAFormulario()"
+    >
+
+        Ingresar a participar
+        <span>↓</span>
+
+    </button>
 
 
 </section>
-
-
 
 
 
@@ -203,121 +413,116 @@ PANTALLA DE INGRESO
 APLICACIÓN PRINCIPAL
 ====================================================== -->
 
-
-<section id="aplicacion" class="oculto">
-
-
-
-    <header id="header">
+<section
+    id="aplicacion"
+    class="oculto"
+>
 
 
-        <div>
+<header id="header">
+
+    <div class="titulo-header">
+
+        <img
+            src="asstes/image/LOGO PIIMEP 2.png"
+            alt="Logo PIIMEP"
+            class="logo-piimep-app"
+        >
+
+        <div class="texto-header">
 
             <h1>
-                PIIMEP Participa
+                Plan de Inversiones en Infraestructura de Movilidad y Espacio Público (PIIMEP) de Olmué
             </h1>
-
-
-            <span id="usuario-activo">
-
-            </span>
 
         </div>
 
-        <button id="cambiar-uv">
-            🔄 Cambiar Unidad Vecinal
-        </button>
-
-    </header>
+    </div>
 
 
+    <span id="usuario-activo"></span>
+
+</header>
 
 
 
     <main id="contenedor">
 
 
-        <!-- PANEL LATERAL -->
+        <!-- ======================================
+        PANEL LATERAL
+        ====================================== -->
 
         <aside id="panel">
 
 
             <div class="tarjeta-destacada">
 
-    <h2>
-        Proyectos más votados
-    </h2>
+                <h2>
+                    Proyectos más votados
+                </h2>
 
 
-    <div id="destacado"></div>
+                <div id="destacado"></div>
 
-</div>
-
-
-</div>
-
-
+            </div>
 
 
 
             <div id="proyectos">
 
-
-    <h2>
-        📋 Proyectos
-    </h2>
-
-
-    <select id="selector-proyectos">
-
-        <option value="">
-            Seleccione un proyecto
-        </option>
-
-    </select>
+                <h2>
+                    📋 Proyectos
+                </h2>
 
 
-</div>
+                <select id="selector-proyectos">
 
+                    <option value="">
+                        Seleccione un proyecto
+                    </option>
+
+                </select>
+
+            </div>
 
 
         </aside>
 
 
 
-
-
-
-
-        <!-- MAPA -->
-
+        <!-- ======================================
+        MAPA
+        ====================================== -->
 
         <div id="mapa">
 
 
-    <div id="detalle-proyecto" class="oculto">
+            <div
+                id="detalle-proyecto"
+                class="oculto"
+            ></div>
 
 
-    </div>
-    <div id="modal-voto" class="oculto">
+            <div
+                id="modal-voto"
+                class="oculto"
+            ></div>
 
 
-</div>
-<div id="modal-mensaje" class="oculto">
+            <div
+                id="modal-mensaje"
+                class="oculto"
+            ></div>
 
-</div>
-</div>
 
+        </div>
 
 
     </main>
 
 
-
-
 </section>
-
-
 
 
 
@@ -327,12 +532,15 @@ APLICACIÓN PRINCIPAL
 SCRIPTS
 ====================================================== -->
 
+<script
+    src="https://unpkg.com/leaflet/dist/leaflet.js"
+></script>
 
-<script 
-src="https://unpkg.com/leaflet/dist/leaflet.js">
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 
 <script src="js/database.js"></script>
 
@@ -347,8 +555,6 @@ src="https://unpkg.com/leaflet/dist/leaflet.js">
 <script src="js/app.js"></script>
 
 
-
 </body>
-
 
 </html>
