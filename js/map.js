@@ -37,10 +37,35 @@ let nombresCallesEsri = null;
 
 
 // ======================================
+// CONFIGURACIÓN
+// ======================================
+
+// Los paraderos aparecen desde este nivel de zoom
+const zoomMinimoParaderos = 16;
+
+
+// Vista inicial del mapa
+const centroInicial = [
+
+    -33.005,
+
+    -71.184
+
+];
+
+const zoomInicial = 14;
+
+
+// ======================================
 // INICIALIZAR MAPA
 // ======================================
 
 function inicializarMapa(){
+
+
+    // ======================================
+    // EVITAR CREAR EL MAPA DOS VECES
+    // ======================================
 
     if(mapa !== null){
 
@@ -50,6 +75,10 @@ function inicializarMapa(){
 
     }
 
+
+    // ======================================
+    // CREAR MAPA
+    // ======================================
 
     mapa = L.map(
 
@@ -64,11 +93,15 @@ function inicializarMapa(){
     );
 
 
+    // ======================================
+    // VISTA INICIAL
+    // ======================================
+
     mapa.setView(
 
-        [-33.005,-71.184],
+        centroInicial,
 
-        14
+        zoomInicial
 
     );
 
@@ -81,7 +114,11 @@ function inicializarMapa(){
 
         position:"topright"
 
-    }).addTo(mapa);
+    }).addTo(
+
+        mapa
+
+    );
 
 
     // ======================================
@@ -95,7 +132,7 @@ function inicializarMapa(){
         {
 
             attribution:
-            "&copy; OpenStreetMap contributors"
+                "&copy; OpenStreetMap contributors"
 
         }
 
@@ -113,7 +150,7 @@ function inicializarMapa(){
         {
 
             attribution:
-            "Tiles &copy; Esri"
+                "Tiles &copy; Esri"
 
         }
 
@@ -131,17 +168,17 @@ function inicializarMapa(){
         {
 
             attribution:
-            "Labels &copy; Esri",
+                "Labels &copy; Esri",
 
             pane:
-            "overlayPane"
+                "overlayPane"
 
         }
 
     );
 
 
-// ======================================
+    // ======================================
 // PARADEROS
 // ======================================
 
@@ -161,27 +198,40 @@ capaParaderos = L.geoJSON(
 
             const nombre =
 
-                feature.properties?.Paraderos ||
-
-                "Paradero";
+                feature.properties?.Paraderos;
 
 
             // ======================================
-            // OBTENER NÚMERO
+            // BUSCAR NÚMERO DEL PARADERO
             // ======================================
+
+            if(!nombre){
+
+                return null;
+
+            }
+
 
             const coincidencia =
 
-                nombre.match(/\d+/);
+                String(nombre).match(/\d+/);
+
+
+            // ======================================
+            // SI NO TIENE NÚMERO
+            // NO MOSTRAR
+            // ======================================
+
+            if(!coincidencia){
+
+                return null;
+
+            }
 
 
             const numero =
 
-                coincidencia
-
-                    ? coincidencia[0]
-
-                    : "P";
+                coincidencia[0];
 
 
             // ======================================
@@ -197,131 +247,36 @@ capaParaderos = L.geoJSON(
 
                     html:`
 
-    <div class="paradero-senal">
+                        <div class="paradero-cuadro">
 
-        <svg
-            class="icono-bus"
-            viewBox="0 0 64 64"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+                            P${numero}
 
-            <!-- BUS COMPLETAMENTE BLANCO -->
+                        </div>
 
-            <path
-                fill="#ffffff"
-                d="
-                    M16 6
-                    C10 6 7 10 7 16
-                    V46
-                    C7 50 10 53 14 53
-                    H50
-                    C54 53 57 50 57 46
-                    V16
-                    C57 10 54 6 48 6
-                    Z
-                "
-            />
-
-
-            <!-- PARABRISAS -->
-
-            <rect
-                x="13"
-                y="13"
-                width="38"
-                height="14"
-                rx="3"
-                fill="#005A9C"
-            />
-
-
-            <!-- DIVISIÓN DEL PARABRISAS -->
-
-            <rect
-                x="30"
-                y="13"
-                width="4"
-                height="14"
-                fill="#ffffff"
-            />
-
-
-            <!-- FRENTE INFERIOR -->
-
-            <rect
-                x="13"
-                y="32"
-                width="38"
-                height="7"
-                rx="2"
-                fill="#005A9C"
-            />
-
-
-            <!-- FAROS -->
-
-            <circle
-                cx="19"
-                cy="44"
-                r="3"
-                fill="#005A9C"
-            />
-
-            <circle
-                cx="45"
-                cy="44"
-                r="3"
-                fill="#005A9C"
-            />
-
-
-            <!-- RUEDAS -->
-
-            <circle
-                cx="14"
-                cy="51"
-                r="5"
-                fill="#ffffff"
-            />
-
-            <circle
-                cx="50"
-                cy="51"
-                r="5"
-                fill="#ffffff"
-            />
-
-        </svg>
-
-
-        <span class="numero-paradero">
-
-            ${numero}
-
-        </span>
-
-    </div>
-
-`,
+                    `,
 
                     iconSize:[
 
-                        12,
+                        22,
 
-                        16
+                        18
 
                     ],
 
                     iconAnchor:[
 
-                        6,
+                        11,
 
-                        8
+                        9
 
                     ]
 
                 });
 
+
+            // ======================================
+            // CREAR MARCADOR
+            // ======================================
 
             return L.marker(
 
@@ -347,182 +302,45 @@ capaParaderos = L.geoJSON(
     }
 
 );
-// ======================================
-// CARGAR PARADEROS
-// ======================================
 
-fetch(
-
-    "data/Paraderos.geojson"
-
-)
-
-.then(
-
-    respuesta => {
-
-        if(!respuesta.ok){
-
-            throw new Error(
-
-                "No fue posible cargar Paraderos.geojson"
-
-            );
-
-        }
-
-        return respuesta.json();
-
-    }
-
-)
-
-.then(
-
-    datos => {
-
-        capaParaderos.addData(
-
-            datos
-
-        );
-
-
-        // Encender al iniciar
-
-        capaParaderos.addTo(
-
-            mapa
-
-        );
-
-    }
-
-)
-
-.catch(
-
-    error => {
-
-        console.error(
-
-            "Error cargando Paraderos.geojson:",
-
-            error
-
-        );
-
-    }
-
-);
-   // ======================================
-// ÁREA URBANA
-// ======================================
-
-capaLimiteUrbano = L.geoJSON(
-
-    null,
-
-    {
-
-        interactive:false,
-
-        style:function(){
-
-            return {
-
-                color:"#005A9C",
-
-                weight:3,
-
-                opacity:0.9,
-
-                fillColor:"#005A9C",
-
-                fillOpacity:0.08,
-
-                interactive:false
-
-            };
-
-        }
-
-    }
-
-);
-
-
-// ======================================
-// CARGAR ÁREA URBANA
-// ======================================
-
-fetch(
-
-    "data/Limite_urbano.geojson"
-
-)
-
-.then(
-
-    respuesta => {
-
-        if(!respuesta.ok){
-
-            throw new Error(
-
-                "No fue posible cargar Limite_urbano.geojson"
-
-            );
-
-        }
-
-        return respuesta.json();
-
-    }
-
-)
-
-.then(
-
-    datos => {
-
-        capaLimiteUrbano.addData(
-
-            datos
-
-        );
-
-
-        // Encender al iniciar
-
-        capaLimiteUrbano.addTo(
-
-            mapa
-
-        );
-
-    }
-
-)
-
-.catch(
-
-    error => {
-
-        console.error(
-
-            "Error cargando Limite_urbano.geojson:",
-
-            error
-
-        );
-
-    }
-
-);
 
     // ======================================
-    // SATÉLITE POR DEFECTO
+    // ÁREA URBANA
+    // ======================================
+
+    capaLimiteUrbano = L.geoJSON(
+
+        null,
+
+        {
+
+            interactive:false,
+
+            style:function(){
+
+                return {
+
+                    color:"#005A9C",
+
+                    weight:3,
+
+                    opacity:0.9,
+
+                    fillColor:"#005A9C",
+
+                    fillOpacity:0.08
+
+                };
+
+            }
+
+        }
+
+    );
+
+
+    // ======================================
+    // MAPA SATELITAL POR DEFECTO
     // ======================================
 
     mapaSatelite.addTo(
@@ -532,24 +350,16 @@ fetch(
     );
 
 
+    // ======================================
+    // NOMBRES DE CALLES POR DEFECTO
+    // ======================================
+
     nombresCallesEsri.addTo(
 
         mapa
 
     );
 
-    capaParaderos.addTo(
-
-        mapa
-
-    );
-
-
-    capaLimiteUrbano.addTo(
-
-        mapa
-
-    );
 
     // ======================================
     // CONTROL DE CAPAS
@@ -591,6 +401,236 @@ fetch(
 
 
     // ======================================
+    // CARGAR PARADEROS
+    // ======================================
+
+    fetch(
+
+        "data/Paraderos.geojson"
+
+    )
+
+    .then(
+
+        respuesta => {
+
+            if(!respuesta.ok){
+
+                throw new Error(
+
+                    "No fue posible cargar Paraderos.geojson"
+
+                );
+
+            }
+
+            return respuesta.json();
+
+        }
+
+    )
+
+    .then(
+
+        datos => {
+
+            capaParaderos.addData(
+
+                datos
+
+            );
+
+
+            // Mostrar solamente si
+            // estamos en el zoom adecuado
+
+            if(
+
+                mapa.getZoom() >=
+                zoomMinimoParaderos
+
+            ){
+
+                capaParaderos.addTo(
+
+                    mapa
+
+                );
+
+            }
+
+        }
+
+    )
+
+    .catch(
+
+        error => {
+
+            console.error(
+
+                "Error cargando Paraderos.geojson:",
+
+                error
+
+            );
+
+        }
+
+    );
+
+
+    // ======================================
+    // CARGAR ÁREA URBANA
+    // ======================================
+
+    fetch(
+
+        "data/Limite_urbano.geojson"
+
+    )
+
+    .then(
+
+        respuesta => {
+
+            if(!respuesta.ok){
+
+                throw new Error(
+
+                    "No fue posible cargar Limite_urbano.geojson"
+
+                );
+
+            }
+
+            return respuesta.json();
+
+        }
+
+    )
+
+    .then(
+
+        datos => {
+
+            capaLimiteUrbano.addData(
+
+                datos
+
+            );
+
+
+            capaLimiteUrbano.addTo(
+
+                mapa
+
+            );
+
+        }
+
+    )
+
+    .catch(
+
+        error => {
+
+            console.error(
+
+                "Error cargando Limite_urbano.geojson:",
+
+                error
+
+            );
+
+        }
+
+    );
+
+
+    // ======================================
+    // MOSTRAR / OCULTAR PARADEROS
+    // SEGÚN ZOOM
+    // ======================================
+
+    mapa.on(
+
+        "zoomend",
+
+        function(){
+
+            if(!capaParaderos){
+
+                return;
+
+            }
+
+
+            const zoomActual =
+
+                mapa.getZoom();
+
+
+            // ======================================
+            // ZOOM ALEJADO
+            // ======================================
+
+            if(
+
+                zoomActual <
+                zoomMinimoParaderos
+
+            ){
+
+                if(
+
+                    mapa.hasLayer(
+                        capaParaderos
+                    )
+
+                ){
+
+                    mapa.removeLayer(
+
+                        capaParaderos
+
+                    );
+
+                }
+
+            }
+
+
+            // ======================================
+            // ZOOM CERCANO
+            // ======================================
+
+            else{
+
+                if(
+
+                    !mapa.hasLayer(
+                        capaParaderos
+                    )
+
+                ){
+
+                    capaParaderos.addTo(
+
+                        mapa
+
+                    );
+
+                }
+
+            }
+
+        }
+
+    );
+
+
+    // ======================================
     // CONTROLAR NOMBRES DE CALLES
     // SEGÚN MAPA BASE
     // ======================================
@@ -600,6 +640,10 @@ fetch(
         "baselayerchange",
 
         function(evento){
+
+            // ======================================
+            // SATÉLITE
+            // ======================================
 
             if(
 
@@ -626,6 +670,10 @@ fetch(
 
             }
 
+
+            // ======================================
+            // CALLES
+            // ======================================
 
             if(
 
@@ -667,6 +715,23 @@ function agregarProyectosMapa(){
 
 
     // ======================================
+    // VERIFICAR MAPA
+    // ======================================
+
+    if(!mapa){
+
+        console.warn(
+
+            "El mapa todavía no ha sido inicializado."
+
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
     // LIMPIAR PROYECTOS ANTERIORES
     // ======================================
 
@@ -674,11 +739,21 @@ function agregarProyectosMapa(){
 
         marcador => {
 
-            mapa.removeLayer(
+            if(
 
-                marcador
+                mapa.hasLayer(
+                    marcador
+                )
 
-            );
+            ){
+
+                mapa.removeLayer(
+
+                    marcador
+
+                );
+
+            }
 
         }
 
@@ -689,6 +764,29 @@ function agregarProyectosMapa(){
 
 
     // ======================================
+    // VERIFICAR PROYECTOS
+    // ======================================
+
+    if(
+
+        !Array.isArray(
+            proyectosUsuario
+        )
+
+    ){
+
+        console.warn(
+
+            "proyectosUsuario no es un arreglo."
+
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
     // AGREGAR PROYECTOS
     // ======================================
 
@@ -696,6 +794,39 @@ function agregarProyectosMapa(){
 
         proyecto => {
 
+
+            // ======================================
+            // VERIFICAR COORDENADAS
+            // ======================================
+
+            if(
+
+                proyecto.lat === undefined ||
+
+                proyecto.lng === undefined ||
+
+                proyecto.lat === null ||
+
+                proyecto.lng === null
+
+            ){
+
+                console.warn(
+
+                    "Proyecto sin coordenadas:",
+
+                    proyecto
+
+                );
+
+                return;
+
+            }
+
+
+            // ======================================
+            // CREAR MARCADOR
+            // ======================================
 
             const marcador =
 
@@ -712,12 +843,20 @@ function agregarProyectosMapa(){
                 );
 
 
+            // ======================================
+            // AGREGAR AL MAPA
+            // ======================================
+
             marcador.addTo(
 
                 mapa
 
             );
 
+
+            // ======================================
+            // CLICK
+            // ======================================
 
             marcador.on(
 
@@ -735,6 +874,10 @@ function agregarProyectosMapa(){
 
             );
 
+
+            // ======================================
+            // GUARDAR MARCADOR
+            // ======================================
 
             marcadores.push(
 
@@ -804,6 +947,27 @@ function seleccionarProyecto(
 
 ){
 
+    // ======================================
+    // VERIFICAR COORDENADAS
+    // ======================================
+
+    if(
+
+        proyecto.lat === undefined ||
+
+        proyecto.lng === undefined
+
+    ){
+
+        return;
+
+    }
+
+
+    // ======================================
+    // CENTRAR MAPA
+    // ======================================
+
     mapa.setView(
 
         [
@@ -819,6 +983,10 @@ function seleccionarProyecto(
     );
 
 
+    // ======================================
+    // MOSTRAR DETALLE
+    // ======================================
+
     mostrarDetalleProyecto(
 
         proyecto
@@ -833,6 +1001,11 @@ function seleccionarProyecto(
 // ======================================
 
 function volverVistaInicial(){
+
+
+    // ======================================
+    // VOLVER A PROYECTOS
+    // ======================================
 
     if(
 
@@ -862,24 +1035,27 @@ function volverVistaInicial(){
 
     }
 
+
+    // ======================================
+    // VISTA GENERAL
+    // ======================================
+
     else{
 
         mapa.setView(
 
-            [
+            centroInicial,
 
-                -33.005,
-
-                -71.184
-
-            ],
-
-            14
+            zoomInicial
 
         );
 
     }
 
+
+    // ======================================
+    // CERRAR DETALLE
+    // ======================================
 
     cerrarDetalleProyecto();
 
