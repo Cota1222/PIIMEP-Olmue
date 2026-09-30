@@ -447,7 +447,19 @@ APLICACIÓN PRINCIPAL
     </div>
 
 
-    <span id="usuario-activo"></span>
+    <div class="acciones-header">
+
+        <span id="usuario-activo"></span>
+
+        <button
+            id="boton-volver-inicio"
+            type="button"
+            onclick="volverInicio()"
+        >
+            ← Volver al inicio
+        </button>
+
+    </div>
 
 </header>
 
@@ -526,14 +538,57 @@ APLICACIÓN PRINCIPAL
         </div>
 
 
+ <!-- ======================================
+         LEYENDA DE PROYECTOS
+    ====================================== -->
+
+    <div id="leyenda-proyectos">
+
+        <button
+            id="boton-leyenda"
+            type="button"
+            onclick="toggleLeyenda()"
+            aria-label="Mostrar leyenda"
+        >
+            <span>▣</span>
+            <span>Leyenda</span>
+        </button>
+
+        <div id="contenido-leyenda">
+
+            <div class="item-leyenda">
+
+                <span
+                    class="simbolo-leyenda movilidad"
+                ></span>
+
+                <span>
+                    Movilidad
+                </span>
+
+            </div>
+
+            <div class="item-leyenda">
+
+                <span
+                    class="simbolo-leyenda espacio-publico"
+                ></span>
+
+                <span>
+                    Espacio Público
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
     </main>
 
 
 </section>
-
-
-
-
 
 <!-- ======================================================
 SCRIPTS

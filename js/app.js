@@ -343,3 +343,60 @@ function controlarBotonIngresar(){
     observer.observe(formulario);
 
 }
+// ======================================
+// VOLVER AL INICIO
+// ======================================
+
+function volverInicio(){
+
+    // ======================================
+    // OCULTAR APLICACIÓN
+    // ======================================
+
+    const aplicacion =
+        document.getElementById(
+            "aplicacion"
+        );
+
+
+    if(aplicacion){
+
+        aplicacion.classList.add(
+            "oculto"
+        );
+
+    }
+
+
+    // ======================================
+    // MOSTRAR PÁGINA INFORMATIVA
+    // ======================================
+
+    const pantallaInformativa =
+        document.getElementById(
+            "pantalla-informativa"
+        );
+
+
+    if(pantallaInformativa){
+
+        pantallaInformativa.classList.remove(
+            "oculto"
+        );
+
+    }
+
+
+    // ======================================
+    // VOLVER AL INICIO DE LA PÁGINA
+    // ======================================
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}

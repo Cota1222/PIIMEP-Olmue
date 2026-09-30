@@ -94,3 +94,44 @@ async function validarVoto(rut){
 
 
 }
+// ======================================
+// OBTENER PROYECTOS PIIMEP
+// ======================================
+
+async function obtenerProyectos(){
+
+    const { data, error } =
+        await window.supabaseClient
+        .from("Proyectos")
+        .select(`
+            id,
+            codigo,
+            nombre,
+            unidad,
+            categoria,
+            subcategoria,
+            descripcion,
+            estado,
+            lat,
+            long,
+            tipo_geometria,
+            geometria
+        `)
+        .order("id", {
+            ascending:true
+        });
+
+    if(error){
+
+        console.error(
+            "Error obteniendo proyectos:",
+            error
+        );
+
+        throw error;
+
+    }
+
+    return data;
+
+}

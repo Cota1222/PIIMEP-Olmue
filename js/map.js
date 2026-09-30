@@ -26,6 +26,17 @@ let vistaInicial = null;
 
 
 // ======================================
+// PROYECTO SELECCIONADO
+// ======================================
+
+let proyectoSeleccionado = null;
+
+let capaProyectoSeleccionado = null;
+
+let capaBordeSeleccionado = null;
+
+
+// ======================================
 // CAPAS DE INFORMACIÓN
 // ======================================
 
@@ -54,6 +65,29 @@ const centroInicial = [
 ];
 
 const zoomInicial = 14;
+
+
+// ======================================
+// COLORES POR CATEGORÍA
+// ======================================
+
+function obtenerColorCategoria(categoria){
+
+    if(categoria === "Movilidad"){
+
+        return "#F2C300";
+
+    }
+
+    if(categoria === "Espacio Público"){
+
+        return "#2E7D32";
+
+    }
+
+    return "#666666";
+
+}
 
 
 // ======================================
@@ -120,6 +154,36 @@ function inicializarMapa(){
 
     );
 
+        // ======================================
+    // DESELECCIONAR PROYECTO AL HACER
+    // CLICK EN EL MAPA
+    // ======================================
+
+    mapa.on(
+
+        "click",
+
+        function(){
+
+            // Si no hay proyecto seleccionado,
+            // no hacemos nada
+            if(!proyectoSeleccionado){
+
+                return;
+
+            }
+
+
+            // Restaurar línea y borde
+            restaurarProyectoAnterior();
+
+
+            // Cerrar el detalle del proyecto
+            cerrarDetalleProyecto();
+
+        }
+
+    );
 
     // ======================================
     // CAPAS BASE
@@ -179,129 +243,129 @@ function inicializarMapa(){
 
 
     // ======================================
-// PARADEROS
-// ======================================
+    // PARADEROS
+    // ======================================
 
-capaParaderos = L.geoJSON(
+    capaParaderos = L.geoJSON(
 
-    null,
+        null,
 
-    {
+        {
 
-        pointToLayer:function(
+            pointToLayer:function(
 
-            feature,
+                feature,
 
-            latlng
+                latlng
 
-        ){
+            ){
 
-            const nombre =
+                const nombre =
 
-                feature.properties?.Paraderos;
-
-
-            // ======================================
-            // BUSCAR NÚMERO DEL PARADERO
-            // ======================================
-
-            if(!nombre){
-
-                return null;
-
-            }
+                    feature.properties?.Paraderos;
 
 
-            const coincidencia =
+                // ======================================
+                // BUSCAR NÚMERO DEL PARADERO
+                // ======================================
 
-                String(nombre).match(/\d+/);
+                if(!nombre){
 
-
-            // ======================================
-            // SI NO TIENE NÚMERO
-            // NO MOSTRAR
-            // ======================================
-
-            if(!coincidencia){
-
-                return null;
-
-            }
-
-
-            const numero =
-
-                coincidencia[0];
-
-
-            // ======================================
-            // ICONO PARADERO
-            // ======================================
-
-            const iconoParadero =
-
-                L.divIcon({
-
-                    className:
-                        "icono-paradero",
-
-                    html:`
-
-                        <div class="paradero-cuadro">
-
-                            P${numero}
-
-                        </div>
-
-                    `,
-
-                    iconSize:[
-
-                        22,
-
-                        18
-
-                    ],
-
-                    iconAnchor:[
-
-                        11,
-
-                        9
-
-                    ]
-
-                });
-
-
-            // ======================================
-            // CREAR MARCADOR
-            // ======================================
-
-            return L.marker(
-
-                latlng,
-
-                {
-
-                    icon:
-                        iconoParadero,
-
-                    interactive:
-                        false,
-
-                    keyboard:
-                        false
+                    return null;
 
                 }
 
-            );
+
+                const coincidencia =
+
+                    String(nombre).match(/\d+/);
+
+
+                // ======================================
+                // SI NO TIENE NÚMERO
+                // NO MOSTRAR
+                // ======================================
+
+                if(!coincidencia){
+
+                    return null;
+
+                }
+
+
+                const numero =
+
+                    coincidencia[0];
+
+
+                // ======================================
+                // ICONO PARADERO
+                // ======================================
+
+                const iconoParadero =
+
+                    L.divIcon({
+
+                        className:
+                            "icono-paradero",
+
+                        html:`
+
+                            <div class="paradero-cuadro">
+
+                                P${numero}
+
+                            </div>
+
+                        `,
+
+                        iconSize:[
+
+                            22,
+
+                            18
+
+                        ],
+
+                        iconAnchor:[
+
+                            11,
+
+                            9
+
+                        ]
+
+                    });
+
+
+                // ======================================
+                // CREAR MARCADOR
+                // ======================================
+
+                return L.marker(
+
+                    latlng,
+
+                    {
+
+                        icon:
+                            iconoParadero,
+
+                        interactive:
+                            false,
+
+                        keyboard:
+                            false
+
+                    }
+
+                );
+
+            }
 
         }
 
-    }
-
-);
+    );
 
 
     // ======================================
@@ -441,9 +505,6 @@ capaParaderos = L.geoJSON(
             );
 
 
-            // Mostrar solamente si
-            // estamos en el zoom adecuado
-
             if(
 
                 mapa.getZoom() >=
@@ -520,7 +581,6 @@ capaParaderos = L.geoJSON(
 
             );
 
-
             capaLimiteUrbano.addTo(
 
                 mapa
@@ -567,12 +627,11 @@ capaParaderos = L.geoJSON(
 
 
             const zoomActual =
-
                 mapa.getZoom();
 
 
             // ======================================
-            // ZOOM ALEJADO
+            // OCULTAR
             // ======================================
 
             if(
@@ -602,7 +661,7 @@ capaParaderos = L.geoJSON(
 
 
             // ======================================
-            // ZOOM CERCANO
+            // MOSTRAR
             // ======================================
 
             else{
@@ -708,11 +767,545 @@ capaParaderos = L.geoJSON(
 
 
 // ======================================
+// CALCULAR LONGITUD APROXIMADA
+// ======================================
+
+function longitudLinea(coordenadas){
+
+    if(
+
+        !coordenadas ||
+
+        coordenadas.length < 2
+
+    ){
+
+        return 0;
+
+    }
+
+
+    let longitud = 0;
+
+
+    for(
+
+        let i = 0;
+
+        i < coordenadas.length - 1;
+
+        i++
+
+    ){
+
+        const a = coordenadas[i];
+
+        const b = coordenadas[i + 1];
+
+
+        const dx =
+            b[0] - a[0];
+
+        const dy =
+            b[1] - a[1];
+
+
+        longitud += Math.sqrt(
+
+            dx * dx +
+            dy * dy
+
+        );
+
+    }
+
+
+    return longitud;
+
+}
+
+
+// ======================================
+// OBTENER PUNTO MEDIO DE UNA LÍNEA
+// ======================================
+
+function obtenerPuntoMedioLinea(coordenadas){
+
+    if(
+
+        !coordenadas ||
+
+        coordenadas.length === 0
+
+    ){
+
+        return null;
+
+    }
+
+
+    if(
+
+        coordenadas.length === 1
+
+    ){
+
+        return L.latLng(
+
+            coordenadas[0][1],
+
+            coordenadas[0][0]
+
+        );
+
+    }
+
+
+    const longitudTotal =
+
+        longitudLinea(
+
+            coordenadas
+
+        );
+
+
+    const mitad =
+
+        longitudTotal / 2;
+
+
+    let acumulado = 0;
+
+
+    for(
+
+        let i = 0;
+
+        i < coordenadas.length - 1;
+
+        i++
+
+    ){
+
+        const a =
+            coordenadas[i];
+
+        const b =
+            coordenadas[i + 1];
+
+
+        const dx =
+            b[0] - a[0];
+
+        const dy =
+            b[1] - a[1];
+
+
+        const longitudSegmento =
+
+            Math.sqrt(
+
+                dx * dx +
+                dy * dy
+
+            );
+
+
+        if(
+
+            acumulado +
+            longitudSegmento >=
+            mitad
+
+        ){
+
+            const restante =
+
+                mitad -
+                acumulado;
+
+
+            const proporcion =
+
+                longitudSegmento === 0
+
+                    ? 0
+
+                    :
+
+                    restante /
+                    longitudSegmento;
+
+
+            const lng =
+
+                a[0] +
+                (b[0] - a[0]) *
+                proporcion;
+
+
+            const lat =
+
+                a[1] +
+                (b[1] - a[1]) *
+                proporcion;
+
+
+            return L.latLng(
+
+                lat,
+
+                lng
+
+            );
+
+        }
+
+
+        acumulado +=
+
+            longitudSegmento;
+
+    }
+
+
+    const ultimo =
+
+        coordenadas[
+            coordenadas.length - 1
+        ];
+
+
+    return L.latLng(
+
+        ultimo[1],
+
+        ultimo[0]
+
+    );
+
+}
+
+
+// ======================================
+// OBTENER PUNTO DE ETIQUETA
+// ======================================
+
+function obtenerPuntoEtiqueta(geometria){
+
+    if(!geometria){
+
+        return null;
+
+    }
+
+
+    // ======================================
+    // PUNTO
+    // ======================================
+
+    if(
+
+        geometria.type ===
+        "Point"
+
+    ){
+
+        return L.latLng(
+
+            geometria.coordinates[1],
+
+            geometria.coordinates[0]
+
+        );
+
+    }
+
+
+    // ======================================
+    // LÍNEA
+    // ======================================
+
+    if(
+
+        geometria.type ===
+        "LineString"
+
+    ){
+
+        return obtenerPuntoMedioLinea(
+
+            geometria.coordinates
+
+        );
+
+    }
+
+
+    // ======================================
+    // MULTILÍNEA
+    // ======================================
+
+    if(
+
+        geometria.type ===
+        "MultiLineString"
+
+    ){
+
+        let lineaMasLarga = null;
+
+        let longitudMayor = 0;
+
+
+        geometria.coordinates.forEach(
+
+            linea => {
+
+                const longitud =
+
+                    longitudLinea(
+
+                        linea
+
+                    );
+
+
+                if(
+
+                    longitud >
+                    longitudMayor
+
+                ){
+
+                    longitudMayor =
+                        longitud;
+
+                    lineaMasLarga =
+                        linea;
+
+                }
+
+            }
+
+        );
+
+
+        if(lineaMasLarga){
+
+            return obtenerPuntoMedioLinea(
+
+                lineaMasLarga
+
+            );
+
+        }
+
+    }
+
+
+    // ======================================
+    // FALLBACK
+    // ======================================
+
+    const capaTemporal =
+
+        L.geoJSON(
+
+            geometria
+
+        );
+
+
+    const limites =
+
+        capaTemporal.getBounds();
+
+
+    if(
+
+        limites.isValid()
+
+    ){
+
+        return limites.getCenter();
+
+    }
+
+
+    return null;
+
+}
+
+
+// ======================================
+// CREAR ICONO DEL PROYECTO
+// ======================================
+
+function crearIconoProyecto(proyecto){
+
+    const color =
+
+        obtenerColorCategoria(
+
+            proyecto.categoria
+
+        );
+
+
+    // ======================================
+    // OBTENER NÚMERO
+    // ======================================
+
+    let numero =
+
+        proyecto.codigo ||
+        proyecto.id;
+
+
+    if(
+
+        String(numero).includes("-")
+
+    ){
+
+        numero =
+
+            String(numero)
+                .split("-")
+                .pop();
+
+    }
+
+
+    // ======================================
+    // CREAR ICONO
+    // ======================================
+
+    return L.divIcon({
+
+        className:
+            "icono-proyecto",
+
+        html:`
+
+            <div
+                class="etiqueta-proyecto"
+                style="
+                    background-color:${color};
+                "
+            >
+
+                ${numero}
+
+            </div>
+
+        `,
+
+        iconSize:[
+
+            32,
+
+            22
+
+        ],
+
+        iconAnchor:[
+
+            16,
+
+            11
+
+        ]
+
+    });
+
+}
+
+
+// ======================================
+// RESTAURAR PROYECTO ANTERIOR
+// ======================================
+
+function restaurarProyectoAnterior(){
+
+    // ======================================
+    // RESTAURAR BORDE
+    // ======================================
+
+    if(capaBordeSeleccionado){
+
+        capaBordeSeleccionado.setStyle({
+
+            color:
+                "#FFFFFF",
+
+            weight:
+                8,
+
+            opacity:
+                0.55
+
+        });
+
+    }
+
+
+    // ======================================
+    // RESTAURAR LÍNEA
+    // ======================================
+
+    if(capaProyectoSeleccionado){
+
+        const proyectoAnterior =
+
+            capaProyectoSeleccionado._proyectoPIIMEP;
+
+
+        const colorAnterior =
+
+            obtenerColorCategoria(
+
+                proyectoAnterior?.categoria
+
+            );
+
+
+        capaProyectoSeleccionado.setStyle({
+
+            color:
+                colorAnterior,
+
+            weight:
+                5,
+
+            opacity:
+                0.55
+
+        });
+
+    }
+
+
+    // ======================================
+    // LIMPIAR REFERENCIAS
+    // ======================================
+
+    capaProyectoSeleccionado = null;
+
+    capaBordeSeleccionado = null;
+
+    proyectoSeleccionado = null;
+
+}
+
+
+// ======================================
 // AGREGAR PROYECTOS AL MAPA
 // ======================================
 
 function agregarProyectosMapa(){
-
 
     // ======================================
     // VERIFICAR MAPA
@@ -732,26 +1325,20 @@ function agregarProyectosMapa(){
 
 
     // ======================================
-    // LIMPIAR PROYECTOS ANTERIORES
+    // ELIMINAR PROYECTOS ANTERIORES
     // ======================================
 
     marcadores.forEach(
 
-        marcador => {
+        capa => {
 
             if(
 
-                mapa.hasLayer(
-                    marcador
-                )
+                mapa.hasLayer(capa)
 
             ){
 
-                mapa.removeLayer(
-
-                    marcador
-
-                );
+                mapa.removeLayer(capa);
 
             }
 
@@ -761,6 +1348,17 @@ function agregarProyectosMapa(){
 
 
     marcadores = [];
+
+
+    // ======================================
+    // LIMPIAR SELECCIÓN
+    // ======================================
+
+    capaProyectoSeleccionado = null;
+
+    capaBordeSeleccionado = null;
+
+    proyectoSeleccionado = null;
 
 
     // ======================================
@@ -787,7 +1385,7 @@ function agregarProyectosMapa(){
 
 
     // ======================================
-    // AGREGAR PROYECTOS
+    // RECORRER PROYECTOS
     // ======================================
 
     proyectosUsuario.forEach(
@@ -796,26 +1394,325 @@ function agregarProyectosMapa(){
 
 
             // ======================================
-            // VERIFICAR COORDENADAS
+            // VERIFICAR GEOMETRÍA
             // ======================================
 
             if(
 
-                proyecto.lat === undefined ||
-
-                proyecto.lng === undefined ||
-
-                proyecto.lat === null ||
-
-                proyecto.lng === null
+                !proyecto.geometria
 
             ){
 
                 console.warn(
 
-                    "Proyecto sin coordenadas:",
+                    "Proyecto sin geometría:",
 
-                    proyecto
+                    proyecto.codigo
+
+                );
+
+                return;
+
+            }
+
+
+            // ======================================
+            // GEOMETRÍA LIMPIA
+            // ======================================
+
+            const geometria = {
+
+                type:
+                    proyecto.geometria.type,
+
+                coordinates:
+                    proyecto.geometria.coordinates
+
+            };
+
+
+            console.log(
+
+                "Dibujando:",
+
+                proyecto.codigo,
+
+                geometria.type
+
+            );
+
+
+            // ======================================
+            // COLOR
+            // ======================================
+
+            const color =
+
+                obtenerColorCategoria(
+
+                    proyecto.categoria
+
+                );
+
+
+            // ======================================
+            // CAPA DE BORDE
+            // ======================================
+
+            const capaBorde =
+
+                L.geoJSON(
+
+                    geometria,
+
+                    {
+
+                        style:function(){
+
+                            return {
+
+                                color:
+                                    "#FFFFFF",
+
+                                weight:
+                                    8,
+
+                                opacity:
+                                    0.55,
+
+                                lineCap:
+                                    "round",
+
+                                lineJoin:
+                                    "round"
+
+                            };
+
+                        },
+
+                        pointToLayer:
+                            function(
+
+                                feature,
+
+                                latlng
+
+                            ){
+
+                                return L.circleMarker(
+
+                                    latlng,
+
+                                    {
+
+                                        radius:
+                                            10,
+
+                                        fillColor:
+                                            color,
+
+                                        color:
+                                            "#FFFFFF",
+
+                                        weight:
+                                            3,
+
+                                        opacity:
+                                            1,
+
+                                        fillOpacity:
+                                            1
+
+                                    }
+
+                                );
+
+                            }
+
+                    }
+
+                );
+
+
+            // ======================================
+            // GUARDAR REFERENCIA
+            // ======================================
+
+            capaBorde._proyectoPIIMEP =
+                proyecto;
+
+
+            // ======================================
+            // CAPA PRINCIPAL
+            // ======================================
+
+            const capaProyecto =
+
+                L.geoJSON(
+
+                    geometria,
+
+                    {
+
+                        style:function(){
+
+                            return {
+
+                                color:
+                                    color,
+
+                                weight:
+                                    5,
+
+                                opacity:
+                                    0.55,
+
+                                lineCap:
+                                    "round",
+
+                                lineJoin:
+                                    "round"
+
+                            };
+
+                        },
+
+                        pointToLayer:
+                            function(
+
+                                feature,
+
+                                latlng
+
+                            ){
+
+                                return L.circleMarker(
+
+                                    latlng,
+
+                                    {
+
+                                        radius:
+                                            7,
+
+                                        fillColor:
+                                            color,
+
+                                        color:
+                                            "#FFFFFF",
+
+                                        weight:
+                                            2,
+
+                                        opacity:
+                                            1,
+
+                                        fillOpacity:
+                                            0.95
+
+                                    }
+
+                                );
+
+                            }
+
+                    }
+
+                );
+
+
+            // ======================================
+            // GUARDAR REFERENCIA
+            // ======================================
+
+            capaProyecto._proyectoPIIMEP =
+                proyecto;
+
+
+            // ======================================
+            // CLICK EN BORDE
+            // ======================================
+
+            capaBorde.on(
+
+                "click",
+
+                function(){
+
+                    seleccionarProyecto(
+
+                        proyecto
+
+                    );
+
+                }
+
+            );
+
+
+            // ======================================
+            // CLICK EN GEOMETRÍA
+            // ======================================
+
+            capaProyecto.on(
+
+                "click",
+
+                function(){
+
+                    seleccionarProyecto(
+
+                        proyecto
+
+                    );
+
+                }
+
+            );
+
+
+            // ======================================
+            // AGREGAR BORDE
+            // ======================================
+
+            capaBorde.addTo(
+
+                mapa
+
+            );
+
+
+            // ======================================
+            // AGREGAR PROYECTO
+            // ======================================
+
+            capaProyecto.addTo(
+
+                mapa
+
+            );
+
+
+            // ======================================
+            // PUNTO DE ETIQUETA
+            // ======================================
+
+            const centro =
+
+                obtenerPuntoEtiqueta(
+
+                    geometria
+
+                );
+
+
+            if(!centro){
+
+                console.warn(
+
+                    "No fue posible ubicar etiqueta:",
+
+                    proyecto.codigo
 
                 );
 
@@ -832,30 +1729,39 @@ function agregarProyectosMapa(){
 
                 L.marker(
 
-                    [
+                    centro,
 
-                        proyecto.lat,
+                    {
 
-                        proyecto.lng
+                        icon:
+                            crearIconoProyecto(
+                                proyecto
+                            ),
 
-                    ]
+                        zIndexOffset:
+                            1000
+
+                    }
 
                 );
 
 
             // ======================================
-            // AGREGAR AL MAPA
+            // REFERENCIAS DIRECTAS
             // ======================================
 
-            marcador.addTo(
+            marcador._proyectoPIIMEP =
+                proyecto;
 
-                mapa
+            marcador._capaBorde =
+                capaBorde;
 
-            );
+            marcador._capaProyecto =
+                capaProyecto;
 
 
             // ======================================
-            // CLICK
+            // CLICK EN MARCADOR
             // ======================================
 
             marcador.on(
@@ -871,6 +1777,17 @@ function agregarProyectosMapa(){
                     );
 
                 }
+
+            );
+
+
+            // ======================================
+            // AGREGAR MARCADOR
+            // ======================================
+
+            marcador.addTo(
+
+                mapa
 
             );
 
@@ -909,28 +1826,50 @@ function agregarProyectosMapa(){
             );
 
 
-        mapa.fitBounds(
+        const limites =
 
-            grupo.getBounds(),
+            grupo.getBounds();
 
-            {
 
-                padding:[
+        console.log(
 
-                    50,
+            "Extensión proyectos:",
 
-                    50
-
-                ]
-
-            }
+            limites
 
         );
 
 
-        vistaInicial =
+        if(
 
-            mapa.getBounds();
+            limites.isValid()
+
+        ){
+
+            mapa.fitBounds(
+
+                limites,
+
+                {
+
+                    padding:[
+
+                        50,
+
+                        50
+
+                    ]
+
+                }
+
+            );
+
+
+            vistaInicial =
+
+                mapa.getBounds();
+
+        }
 
     }
 
@@ -948,14 +1887,14 @@ function seleccionarProyecto(
 ){
 
     // ======================================
-    // VERIFICAR COORDENADAS
+    // VERIFICAR
     // ======================================
 
     if(
 
-        proyecto.lat === undefined ||
+        !proyecto ||
 
-        proyecto.lng === undefined
+        !proyecto.geometria
 
     ){
 
@@ -965,22 +1904,140 @@ function seleccionarProyecto(
 
 
     // ======================================
-    // CENTRAR MAPA
+    // SI YA HAY OTRO SELECCIONADO
+    // RESTAURARLO
     // ======================================
 
-    mapa.setView(
+    if(
 
-        [
+        proyectoSeleccionado &&
+        proyectoSeleccionado !== proyecto
 
-            proyecto.lat,
+    ){
 
-            proyecto.lng
+        restaurarProyectoAnterior();
 
-        ],
+    }
 
-        17
 
-    );
+    // ======================================
+    // BUSCAR MARCADOR DEL PROYECTO
+    // ======================================
+
+    const marcadorProyecto =
+
+        marcadores.find(
+
+            marcador =>
+
+                marcador instanceof L.Marker &&
+
+                marcador._proyectoPIIMEP ===
+                proyecto
+
+        );
+
+
+    // ======================================
+    // VERIFICAR
+    // ======================================
+
+    if(!marcadorProyecto){
+
+        console.warn(
+
+            "No se encontraron las referencias del proyecto:",
+
+            proyecto.codigo
+
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // OBTENER CAPAS DIRECTAMENTE
+    // ======================================
+
+    capaBordeSeleccionado =
+
+        marcadorProyecto._capaBorde;
+
+
+    capaProyectoSeleccionado =
+
+        marcadorProyecto._capaProyecto;
+
+
+    // ======================================
+    // GUARDAR PROYECTO
+    // ======================================
+
+    proyectoSeleccionado =
+        proyecto;
+
+
+    // ======================================
+    // COLOR
+    // ======================================
+
+    const color =
+
+        obtenerColorCategoria(
+
+            proyecto.categoria
+
+        );
+
+
+    // ======================================
+    // RESALTAR BORDE
+    // ======================================
+
+    if(capaBordeSeleccionado){
+
+        capaBordeSeleccionado.setStyle({
+
+            color:
+                "#FFFFFF",
+
+            weight:
+                14,
+
+            opacity:
+                1
+
+        });
+
+        capaBordeSeleccionado.bringToFront();
+
+    }
+
+
+    // ======================================
+    // RESALTAR LÍNEA
+    // ======================================
+
+    if(capaProyectoSeleccionado){
+
+        capaProyectoSeleccionado.setStyle({
+
+            color:
+                color,
+
+            weight:
+                11,
+
+            opacity:
+                1
+
+        });
+
+        capaProyectoSeleccionado.bringToFront();
+
+    }
 
 
     // ======================================
@@ -993,6 +2050,76 @@ function seleccionarProyecto(
 
     );
 
+
+    // ======================================
+    // GEOMETRÍA LIMPIA
+    // ======================================
+
+    const geometria = {
+
+        type:
+            proyecto.geometria.type,
+
+        coordinates:
+            proyecto.geometria.coordinates
+
+    };
+
+
+    // ======================================
+    // CREAR CAPA TEMPORAL
+    // ======================================
+
+    const capa =
+
+        L.geoJSON(
+
+            geometria
+
+        );
+
+
+    // ======================================
+    // OBTENER EXTENSIÓN
+    // ======================================
+
+    const limites =
+
+        capa.getBounds();
+
+
+    // ======================================
+    // ACERCAR AL PROYECTO
+    // ======================================
+
+    if(
+
+        limites.isValid()
+
+    ){
+
+        mapa.fitBounds(
+
+            limites,
+
+            {
+
+                padding:[
+
+                    80,
+
+                    80
+
+                ],
+
+                maxZoom:17
+
+            }
+
+        );
+
+    }
+
 }
 
 
@@ -1002,16 +2129,22 @@ function seleccionarProyecto(
 
 function volverVistaInicial(){
 
+    // ======================================
+    // RESTAURAR PROYECTO
+    // ======================================
+
+    restaurarProyectoAnterior();
+
 
     // ======================================
-    // VOLVER A PROYECTOS
+    // VOLVER A VISTA GENERAL
     // ======================================
 
     if(
 
         vistaInicial &&
 
-        marcadores.length > 0
+        vistaInicial.isValid()
 
     ){
 
@@ -1034,11 +2167,6 @@ function volverVistaInicial(){
         );
 
     }
-
-
-    // ======================================
-    // VISTA GENERAL
-    // ======================================
 
     else{
 

@@ -12,7 +12,68 @@ Controla elementos visuales de la plataforma.
 ========================================================
 */
 
+// ======================================
+// FORMATEAR NOMBRE DEL PROYECTO
+// ======================================
 
+function formatearNombreProyecto(nombre){
+
+    if(!nombre){
+
+        return "Proyecto sin nombre";
+
+    }
+
+    return nombre
+        .toLowerCase()
+        .replace(/\b\w/g, letra => letra.toUpperCase());
+
+}
+
+function cerrarDetalleProyecto(){
+
+    const detalle =
+        document.getElementById("detalle-proyecto");
+
+    if(!detalle){
+        return;
+    }
+
+    detalle.style.display = "none";
+
+}
+
+// ======================================
+// MOSTRAR / OCULTAR LEYENDA
+// ======================================
+
+function toggleLeyenda(){
+
+    const leyenda =
+        document.getElementById(
+            "contenido-leyenda"
+        );
+
+
+    if(!leyenda){
+
+        return;
+
+    }
+
+
+    if(leyenda.style.display === "block"){
+
+        leyenda.style.display = "none";
+
+    }
+    else{
+
+        leyenda.style.display = "block";
+
+    }
+
+}
 // ======================================
 // MOSTRAR DETALLE PROYECTO
 // ======================================
@@ -20,17 +81,52 @@ Controla elementos visuales de la plataforma.
 async function mostrarDetalleProyecto(proyecto){
 
     const detalle =
-        document.getElementById(
-            "detalle-proyecto"
-        );
-
+        document.getElementById("detalle-proyecto");
 
     if(!detalle){
-
         return;
+    }
+
+    detalle.style.display = "block";
+
+
+    // ======================================
+    // COLOR SEGÚN CATEGORÍA
+    // ======================================
+
+    let colorCategoria =
+        "#666666";
+
+
+    if(
+        proyecto.categoria ===
+        "Movilidad"
+    ){
+
+        colorCategoria =
+            "#F2C300";
 
     }
 
+
+    if(
+        proyecto.categoria ===
+        "Espacio Público"
+    ){
+
+        colorCategoria =
+            "#2E7D32";
+
+    }
+
+
+    // ======================================
+    // CÓDIGO DEL PROYECTO
+    // ======================================
+
+    const codigo =
+        proyecto.codigo ||
+        `PIIMEP-${String(proyecto.id).padStart(3,"0")}`;
 
 
     // ======================================
@@ -42,6 +138,9 @@ async function mostrarDetalleProyecto(proyecto){
         <button
             class="boton-votar"
             onclick="abrirVotacion(${proyecto.id})"
+            style="
+                background-color:${colorCategoria};
+            "
         >
 
             🗳️ Votar por este proyecto
@@ -49,7 +148,6 @@ async function mostrarDetalleProyecto(proyecto){
         </button>
 
     `;
-
 
 
     // ======================================
@@ -73,7 +171,7 @@ async function mostrarDetalleProyecto(proyecto){
                     disabled
                 >
 
-                    Ya participaste
+                    ✓ Ya participaste
 
                 </button>
 
@@ -84,16 +182,20 @@ async function mostrarDetalleProyecto(proyecto){
     }
 
 
-
     // ======================================
     // MOSTRAR INFORMACIÓN
     // ======================================
 
     detalle.innerHTML = `
 
+        <!-- ==================================
+             BOTÓN CERRAR
+        ================================== -->
+
         <button
             class="cerrar-detalle"
-            onclick="volverVistaInicial()"
+            onclick="cerrarDetalleProyecto()"
+            aria-label="Cerrar información"
         >
 
             ✕
@@ -101,81 +203,164 @@ async function mostrarDetalleProyecto(proyecto){
         </button>
 
 
+        <!-- ==================================
+             CÓDIGO
+        ================================== -->
+
+        <div
+            class="detalle-codigo"
+            style="
+                color:${colorCategoria};
+            "
+        >
+
+            ${codigo}
+
+        </div>
+
+
+        <!-- ==================================
+             NOMBRE
+        ================================== -->
+
         <h2>
 
-            ${proyecto.nombre}
+            ${formatearNombreProyecto(proyecto.nombre)}
 
         </h2>
 
 
-        <span class="categoria">
+        <!-- ==================================
+             CATEGORÍA PRINCIPAL
+        ================================== -->
 
-            ${proyecto.categoria || "Proyecto"}
+        <div class="detalle-categoria">
 
-        </span>
+            <span
+                class="detalle-indicador-categoria"
+                style="
+                    background-color:${colorCategoria};
+                "
+            ></span>
+
+            <span>
+
+                ${proyecto.categoria || "Proyecto"}
+
+            </span>
+
+        </div>
 
 
-        <p>
+        <!-- ==================================
+             DATOS DEL PROYECTO
+        ================================== -->
 
-            ${proyecto.descripcion || ""}
-
-        </p>
+        <div class="detalle-datos">
 
 
-        <div class="estado">
+            <!-- CATEGORÍA -->
 
-            Estado:
+            <div class="detalle-dato">
+
+                <span class="detalle-label">
+
+                    Categoría
+
+                </span>
+
+                <strong>
+
+                    ${proyecto.subcategoria || ""}
+
+                </strong>
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="detalle-dato">
+
+                <span class="detalle-label">
+
+                    Estado
+
+                </span>
+
+                <strong>
+
+                    ${proyecto.estado || ""}
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             DESCRIPCIÓN
+        ================================== -->
+
+        <div class="detalle-descripcion">
+
+            <span class="detalle-label">
+
+                Descripción
+
+            </span>
+
+            <p>
+
+                ${proyecto.descripcion || ""}
+
+            </p>
+
+        </div>
+
+
+        <!-- ==================================
+             PARTICIPACIÓN
+        ================================== -->
+
+        <div class="detalle-votos">
+
+            <span>
+
+                Participación
+
+            </span>
 
             <strong>
 
-                ${proyecto.estado || "Propuesta"}
+                ${proyecto.votos || 0}
+
+                ${
+                    (proyecto.votos || 0) === 1
+                    ? " voto"
+                    : " votos"
+                }
 
             </strong>
 
         </div>
 
 
-        <div class="votos">
-
-            ✅ ${proyecto.votos || 0}
-            votos
-
-        </div>
-
+        <!-- ==================================
+             BOTÓN VOTAR
+        ================================== -->
 
         ${botonVoto}
 
-    `;
 
+    `;
 
 
     detalle.classList.remove(
         "oculto"
     );
-
-}
-
-
-
-// ======================================
-// CERRAR DETALLE
-// ======================================
-
-function cerrarDetalleProyecto(){
-
-    const detalle =
-        document.getElementById(
-            "detalle-proyecto"
-        );
-
-
-    if(detalle){
-
-        detalle.classList.add(
-            "oculto"
-        );
-
-    }
 
 }
 
@@ -208,12 +393,10 @@ function abrirVotacion(idProyecto){
     }
 
 
-
     const modal =
         document.getElementById(
             "modal-voto"
         );
-
 
 
     modal.innerHTML = `
@@ -235,7 +418,6 @@ function abrirVotacion(idProyecto){
             </h3>
 
 
-
             <div class="campo-rut">
 
 
@@ -254,7 +436,6 @@ function abrirVotacion(idProyecto){
 
 
             </div>
-
 
 
             <div class="botones-voto">
@@ -286,7 +467,6 @@ function abrirVotacion(idProyecto){
         </div>
 
     `;
-
 
 
     modal.classList.remove(
@@ -340,10 +520,8 @@ async function confirmarVoto(idProyecto){
     }
 
 
-
     const rut =
         campoRut.value.trim();
-
 
 
     // ======================================
@@ -365,7 +543,6 @@ async function confirmarVoto(idProyecto){
     }
 
 
-
     // ======================================
     // VALIDAR FORMATO RUT
     // ======================================
@@ -385,14 +562,12 @@ async function confirmarVoto(idProyecto){
     }
 
 
-
     // ======================================
     // VERIFICAR SI YA VOTÓ
     // ======================================
 
     const yaVoto =
         await validarVoto(rut);
-
 
 
     if(yaVoto){
@@ -410,7 +585,6 @@ async function confirmarVoto(idProyecto){
     }
 
 
-
     // ======================================
     // REGISTRAR VOTO
     // ======================================
@@ -419,29 +593,34 @@ async function confirmarVoto(idProyecto){
 
         await registrarVoto({
 
-            rut:rut,
+            rut:
+                rut,
 
-            proyecto_id:idProyecto,
+            proyecto_id:
+                idProyecto,
 
-            nombre:usuarioActual.nombre,
+            nombre:
+                usuarioActual.nombre,
 
-            direccion:usuarioActual.direccion
+            direccion:
+                usuarioActual.direccion
 
         });
 
 
+        // ==================================
+        // GUARDAR RUT DEL PARTICIPANTE
+        // ==================================
 
-        // Guardar RUT del participante
-        usuarioActual.rut = rut;
+        usuarioActual.rut =
+            rut;
 
 
-
-        // ======================================
+        // ==================================
         // ACTUALIZAR PROYECTOS
-        // ======================================
+        // ==================================
 
         await cargarProyectos();
-
 
 
         const proyectoActualizado =
@@ -453,7 +632,6 @@ async function confirmarVoto(idProyecto){
             );
 
 
-
         if(proyectoActualizado){
 
             mostrarDetalleProyecto(
@@ -463,10 +641,12 @@ async function confirmarVoto(idProyecto){
         }
 
 
-
         cerrarVotacion();
 
 
+        // ==================================
+        // MENSAJE DE ÉXITO
+        // ==================================
 
         mostrarMensaje(
 
@@ -539,7 +719,6 @@ function mostrarMensaje(
     }
 
 
-
     modal.innerHTML = `
 
         <div class="contenido-mensaje">
@@ -571,7 +750,6 @@ function mostrarMensaje(
         </div>
 
     `;
-
 
 
     modal.classList.remove(
@@ -619,7 +797,6 @@ async function verificarParticipacion(
         return false;
 
     }
-
 
 
     const voto =

@@ -18,7 +18,74 @@ let proyectos = [];
 
 let proyectosUsuario = [];
 
+// ======================================
+// FORMATEAR NOMBRE DEL PROYECTO
+// ======================================
 
+function formatearNombreProyecto(nombre){
+
+    if(!nombre){
+
+        return "Proyecto sin nombre";
+
+    }
+
+    const palabrasMinusculas = [
+        "de",
+        "del",
+        "la",
+        "las",
+        "el",
+        "los",
+        "y",
+        "en",
+        "a"
+    ];
+
+
+    return nombre
+        .toLowerCase()
+        .split(/\s+/)
+        .map((palabra, indice) => {
+
+            if(
+                indice > 0 &&
+                palabrasMinusculas.includes(palabra)
+            ){
+
+                return palabra;
+
+            }
+
+            return palabra.charAt(0).toUpperCase() +
+                   palabra.slice(1);
+
+        })
+        .join(" ");
+
+}
+
+
+// ======================================
+// FORMATO COMPLETO DEL PROYECTO
+// ======================================
+
+function nombreCompletoProyecto(proyecto){
+
+    const codigo =
+        proyecto.codigo ||
+        `PIIMEP-${String(proyecto.id).padStart(3,"0")}`;
+
+
+    const nombre =
+        formatearNombreProyecto(
+            proyecto.nombre
+        );
+
+
+    return `${codigo} · ${nombre}`;
+
+}
 
 // ======================================
 // CARGAR PROYECTOS
@@ -28,7 +95,23 @@ async function cargarProyectos(){
 
     const { data, error } = await supabaseClient
         .from("Proyectos")
-        .select("*");
+        .select(`
+            id,
+            codigo,
+            nombre,
+            unidad,
+            categoria,
+            subcategoria,
+            descripcion,
+            estado,
+            lat,
+            long,
+            tipo_geometria,
+            geometria
+        `)
+        .order("id", {
+            ascending:true
+        });
 
 
     if(error){
@@ -43,28 +126,80 @@ async function cargarProyectos(){
     }
 
 
-
-    proyectos = data.map(proyecto => {
-
-        return {
-
-            ...proyecto,
-
-            lng: proyecto.long
-
-        };
-
-    });
+    console.log(
+        "Proyectos desde Supabase:",
+        data
+    );
 
 
+    proyectos = data.map(
+
+        proyecto => {
+
+            let geometria = null;
+
+
+            // ======================================
+            // CONVERTIR GEOMETRÍA POSTGIS
+            // ======================================
+
+            if(proyecto.geometria){
+
+                try{
+
+                    geometria =
+                        typeof proyecto.geometria === "string"
+
+                            ? JSON.parse(
+                                proyecto.geometria
+                            )
+
+                            : proyecto.geometria;
+
+                }
+
+                catch(error){
+
+                    console.error(
+                        "Error interpretando geometría:",
+                        proyecto.codigo,
+                        error
+                    );
+
+                }
+
+            }
+
+
+            return {
+
+                ...proyecto,
+
+                lng: proyecto.long,
+
+                geometria: geometria
+
+            };
+
+        }
+
+    );
+
+
+    // ======================================
+    // CARGAR VOTOS
+    // ======================================
 
     await cargarVotos();
 
 
+    // ======================================
+    // MOSTRAR PROYECTOS
+    // ======================================
+
     mostrarTodosLosProyectos();
 
 }
-
 
 
 // ======================================
@@ -205,7 +340,9 @@ function mostrarProyectos(){
 
 
             opcion.textContent =
-                proyecto.nombre;
+    nombreCompletoProyecto(
+        proyecto
+    );
 
 
             selector.appendChild(
@@ -339,11 +476,13 @@ function mostrarProyectosMasVotados(){
 
                     <div class="ranking-contenido">
 
-                        <h3>
+                        <div class="ranking-codigo">
+    ${proyecto.codigo || `PIIMEP-${String(proyecto.id).padStart(3,"0")}`}
+</div>
 
-                            ${proyecto.nombre}
-
-                        </h3>
+<div class="ranking-nombre">
+    ${formatearNombreProyecto(proyecto.nombre)}
+</div>
 
 
                         <p>
