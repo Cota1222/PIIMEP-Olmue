@@ -154,32 +154,22 @@ async function mostrarDetalleProyecto(proyecto){
     // VERIFICAR SI EL USUARIO YA VOTÓ
     // ======================================
 
-    if(usuarioActual.rut){
-
-        const yaVoto =
-            await validarVoto(
-                usuarioActual.rut
-            );
+    
 
 
-        if(yaVoto){
+if (usuarioActual.rut) {
+    botonVoto = `
+        <button
+            class="boton-votar votado"
+            disabled
+            style="background-color:${colorCategoria};"
+        >
+            ✓ Participación registrada
+        </button>
+    `;
+}
 
-            botonVoto = `
 
-                <button
-                    class="boton-votar votado"
-                    disabled
-                >
-
-                    ✓ Ya participaste
-
-                </button>
-
-            `;
-
-        }
-
-    }
 
 
     // ======================================
@@ -562,28 +552,6 @@ async function confirmarVoto(idProyecto){
     }
 
 
-    // ======================================
-    // VERIFICAR SI YA VOTÓ
-    // ======================================
-
-    const yaVoto =
-        await validarVoto(rut);
-
-
-    if(yaVoto){
-
-        mostrarMensaje(
-
-            "ℹ️ Participación registrada",
-
-            "Este RUT ya fue utilizado para votar."
-
-        );
-
-        return;
-
-    }
-
 
     // ======================================
     // REGISTRAR VOTO
@@ -659,23 +627,27 @@ async function confirmarVoto(idProyecto){
     }
 
 
-    catch(error){
+    
+catch(error) {
+    console.error("Error registrando voto:", error);
 
-        console.error(
-            "Error registrando voto:",
-            error
-        );
-
-
+    if (
+        error.codigo === "RUT_YA_VOTO" ||
+        error.status === 409
+    ) {
         mostrarMensaje(
-
-            "❌ Error",
-
-            "No fue posible registrar el voto."
-
+            "⚠️ Ya participaste",
+            "Este RUT ya fue utilizado para votar."
         );
-
+        return;
     }
+
+    mostrarMensaje(
+        "❌ Error",
+        error.message || "No fue posible registrar el voto."
+    );
+}
+
 
 }
 
@@ -685,15 +657,48 @@ async function confirmarVoto(idProyecto){
 // VALIDAR RUT
 // ======================================
 
-function validarRut(rut){
 
-    const formato =
-        /^\d{7,8}-[\dkK]$/;
+function validarRut(rut) {
 
+    const rutNormalizado = rut
+        .replace(/\./g, "")
+        .replace(/\s/g, "")
+        .toUpperCase();
 
-    return formato.test(rut);
+    const formato = /^(\d{7,8})-([\dK])$/;
+    const coincidencia = rutNormalizado.match(formato);
 
+    if (!coincidencia) {
+        return false;
+    }
+
+    const numero = coincidencia[1];
+    const digitoIngresado = coincidencia[2];
+
+    let suma = 0;
+    let multiplicador = 2;
+
+    for (let i = numero.length - 1; i >= 0; i--) {
+        suma += Number(numero[i]) * multiplicador;
+
+        multiplicador =
+            multiplicador === 7
+                ? 2
+                : multiplicador + 1;
+    }
+
+    const resultado = 11 - (suma % 11);
+
+    const digitoEsperado =
+        resultado === 11
+            ? "0"
+            : resultado === 10
+                ? "K"
+                : String(resultado);
+
+    return digitoIngresado === digitoEsperado;
 }
+
 
 
 
@@ -779,32 +784,5 @@ function cerrarMensaje(){
         );
 
     }
-
-}
-
-
-
-// ======================================
-// VERIFICAR PARTICIPACIÓN
-// ======================================
-
-async function verificarParticipacion(
-    proyecto
-){
-
-    if(!usuarioActual.rut){
-
-        return false;
-
-    }
-
-
-    const voto =
-        await validarVoto(
-            usuarioActual.rut
-        );
-
-
-    return voto;
 
 }

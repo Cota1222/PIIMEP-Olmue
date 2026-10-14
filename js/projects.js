@@ -93,28 +93,13 @@ function nombreCompletoProyecto(proyecto){
 
 async function cargarProyectos(){
 
-    const { data, error } = await supabaseClient
-        .from("Proyectos")
-        .select(`
-            id,
-            codigo,
-            nombre,
-            unidad,
-            categoria,
-            subcategoria,
-            descripcion,
-            estado,
-            lat,
-            long,
-            tipo_geometria,
-            geometria
-        `)
-        .order("id", {
-            ascending:true
-        });
+    let data;
 
+    try {
 
-    if(error){
+        data = await obtenerProyectos();
+
+    } catch(error) {
 
         console.error(
             "Error cargando proyectos:",
@@ -206,49 +191,29 @@ async function cargarProyectos(){
 // CARGAR VOTOS
 // ======================================
 
-async function cargarVotos(){
 
-    const { data, error } = await supabaseClient
-        .from("Votos")
-        .select("proyecto_id");
+async function cargarVotos() {
+    try {
+        const conteos = await obtenerConteosVotos();
 
+        proyectos.forEach(proyecto => {
+            proyecto.votos = Number(
+                conteos[String(proyecto.id)] ?? 0
+            );
+        });
 
-    if(error){
+        console.log("Conteos de votos cargados:", conteos);
 
-        console.error(
-            "Error cargando votos:",
-            error
-        );
-
-        return;
-
+    } catch (error) {
+        console.error("Error obteniendo conteos de votos:", error);
+        
+        // No inventamos conteos si falla la consulta.
+        proyectos.forEach(proyecto => {
+            proyecto.votos = null;
+        });
     }
-
-
-
-    console.log(
-        "Votos desde Supabase:",
-        data
-    );
-
-
-
-    proyectos.forEach(
-
-        proyecto => {
-
-            proyecto.votos = data.filter(
-
-                voto =>
-                    voto.proyecto_id == proyecto.id
-
-            ).length;
-
-        }
-
-    );
-
 }
+
 
 
 
@@ -402,110 +367,95 @@ function mostrarProyectos(){
 function mostrarProyectosMasVotados(){
 
     const contenedor =
-        document.getElementById(
-            "destacado"
-        );
-
+        document.getElementById("destacado");
 
     if(!contenedor){
-
         return;
-
     }
-
-
 
     if(proyectosUsuario.length === 0){
 
         contenedor.innerHTML = `
-
-            <p>
-                No existen proyectos disponibles.
-            </p>
-
+            <p>No existen proyectos disponibles.</p>
         `;
 
         return;
-
     }
 
+    // ======================================
+    // VERIFICAR DISPONIBILIDAD DE LOS VOTOS
+    // ======================================
 
+    const votosDisponibles =
+        proyectosUsuario.every(
+            proyecto =>
+                Number.isFinite(proyecto.votos)
+        );
 
-    /*
-    ====================================================
-    ORDENAR TODOS LOS PROYECTOS
-    POR CANTIDAD DE VOTOS
-    ====================================================
-    */
+    if(!votosDisponibles){
+
+        contenedor.innerHTML = `
+            <p>
+                No fue posible cargar los votos.
+                Intenta actualizar la página.
+            </p>
+        `;
+
+        return;
+    }
+
+    // ======================================
+    // ORDENAR PROYECTOS POR VOTOS
+    // ======================================
 
     const ranking = [...proyectosUsuario]
-
         .sort(
-
-            (a,b) =>
-                (b.votos || 0) -
-                (a.votos || 0)
-
+            (a,b) => b.votos - a.votos
         )
-
         .slice(0,5);
 
-
+    // ======================================
+    // MOSTRAR TOP 5
+    // ======================================
 
     contenedor.innerHTML = ranking.map(
-
         (proyecto,index) => {
 
-            const posicion =
-                index + 1;
-
+            const posicion = index + 1;
 
             return `
-
                 <div
                     class="ranking-item"
                     onclick="abrirProyectoRanking(${proyecto.id})"
                 >
 
                     <div class="ranking-numero">
-
                         ${posicion}
-
                     </div>
-
 
                     <div class="ranking-contenido">
 
                         <div class="ranking-codigo">
-    ${proyecto.codigo || `PIIMEP-${String(proyecto.id).padStart(3,"0")}`}
-</div>
+                            ${proyecto.codigo || `PIIMEP-${String(proyecto.id).padStart(3,"0")}`}
+                        </div>
 
-<div class="ranking-nombre">
-    ${formatearNombreProyecto(proyecto.nombre)}
-</div>
-
+                        <div class="ranking-nombre">
+                            ${formatearNombreProyecto(proyecto.nombre)}
+                        </div>
 
                         <p>
-
-                            ✅ ${proyecto.votos || 0}
-                            votos
-
+                            ✅ ${proyecto.votos}
+                            ${proyecto.votos === 1 ? "voto" : "votos"}
                         </p>
 
                     </div>
 
                 </div>
-
             `;
-
         }
-
     ).join("");
 
 }
-
-
-
 // ======================================
 // ABRIR PROYECTO DESDE EL RANKING
 // ======================================

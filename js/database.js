@@ -33,67 +33,69 @@ window.supabaseClient = supabase.createClient(
 // REGISTRAR VOTO
 // ======================================
 
-async function registrarVoto(datos){
 
+async function registrarVoto(datos) {
+    const respuesta = await fetch(
+        `${SUPABASE_URL}/functions/v1/registrar-voto`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+                accion: "registrar",
+                ...datos
+            })
+        }
+    );
 
-    const { data, error } =
-        await window.supabaseClient
-        .from("Votos")
-        .insert([
-            datos
-        ]);
+    const resultado = await respuesta.json();
 
-
-    if(error){
-
-        console.error(
-            "Error guardando voto:",
-            error
+    if (!respuesta.ok) {
+        const error = new Error(
+            resultado.error || "No fue posible registrar el voto."
         );
+
+        error.codigo = resultado.codigo;
+        error.status = respuesta.status;
 
         throw error;
-
     }
 
-
-    return data;
-
+    return resultado;
 }
 
 
+async function obtenerConteosVotos() {
+    const respuesta = await fetch(
+        `${SUPABASE_URL}/functions/v1/registrar-voto`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+                accion: "conteos"
+            })
+        }
+    );
 
+    const resultado = await respuesta.json();
 
-// ======================================
-// VALIDAR SI RUT YA VOTÓ
-// ======================================
-
-async function validarVoto(rut){
-
-
-    const { data, error } =
-        await window.supabaseClient
-        .from("Votos")
-        .select("id")
-        .eq("rut", rut);
-
-
-
-    if(error){
-
-        console.error(
-            "Error validando voto:",
-            error
+    if (!respuesta.ok) {
+        throw new Error(
+            resultado.error || "No fue posible obtener los conteos."
         );
-
-        return false;
-
     }
 
-
-    return data.length > 0;
-
-
+    return resultado.conteos || {};
 }
+
+
 // ======================================
 // OBTENER PROYECTOS PIIMEP
 // ======================================

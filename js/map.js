@@ -22,6 +22,8 @@ let mapa = null;
 
 let marcadores = [];
 
+let capasProyectos = [];
+
 let vistaInicial = null;
 
 
@@ -1324,30 +1326,20 @@ function agregarProyectosMapa(){
     }
 
 
+    
     // ======================================
-    // ELIMINAR PROYECTOS ANTERIORES
+    // ELIMINAR TODAS LAS CAPAS ANTERIORES
     // ======================================
 
-    marcadores.forEach(
-
-        capa => {
-
-            if(
-
-                mapa.hasLayer(capa)
-
-            ){
-
-                mapa.removeLayer(capa);
-
-            }
-
+    capasProyectos.forEach(capa => {
+        if (mapa.hasLayer(capa)) {
+            mapa.removeLayer(capa);
         }
+    });
 
-    );
-
-
+    capasProyectos = [];
     marcadores = [];
+
 
 
     // ======================================
@@ -1681,6 +1673,7 @@ function agregarProyectosMapa(){
 
             );
 
+            capasProyectos.push(capaBorde);
 
             // ======================================
             // AGREGAR PROYECTO
@@ -1692,6 +1685,7 @@ function agregarProyectosMapa(){
 
             );
 
+            capasProyectos.push(capaProyecto);
 
             // ======================================
             // PUNTO DE ETIQUETA
@@ -1791,6 +1785,7 @@ function agregarProyectosMapa(){
 
             );
 
+            capasProyectos.push(marcador);
 
             // ======================================
             // GUARDAR MARCADOR
