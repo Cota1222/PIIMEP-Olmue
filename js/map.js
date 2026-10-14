@@ -73,11 +73,15 @@ const zoomInicial = 14;
 // COLORES POR CATEGORÍA
 // ======================================
 
+// ======================================
+// COLORES POR CATEGORÍA
+// ======================================
+
 function obtenerColorCategoria(categoria){
 
     if(categoria === "Movilidad"){
 
-        return "#F2C300";
+        return "#E88700";
 
     }
 

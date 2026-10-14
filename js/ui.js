@@ -104,7 +104,7 @@ async function mostrarDetalleProyecto(proyecto){
     ){
 
         colorCategoria =
-            "#F2C300";
+            "#E88700";
 
     }
 
