@@ -2705,3 +2705,34 @@ LEYENDA DE PROYECTOS
 .simbolo-leyenda.espacio-publico{
     background:#2E7D32;
 }
+
+/* =========================================
+   ACCESO A PLADECO DESDE EL FORMULARIO
+========================================= */
+
+#boton-participar-pladeco {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 12px;
+    padding: 13px 18px;
+
+    border: 2px solid var(--azul-principal);
+    border-radius: 10px;
+
+    background: white;
+    color: var(--azul-principal);
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+
+    transition: background 0.2s, color 0.2s;
+}
+
+#boton-participar-pladeco:hover {
+    background: var(--azul-principal);
+    color: white;
+}

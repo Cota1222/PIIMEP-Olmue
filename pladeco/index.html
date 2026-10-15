@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mapa de proyectos | PLADECO Olmué 2027–2030</title>
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+/>
+
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="encabezado">
+
+    <div class="encabezado-contenido">
+
+        <img
+            src="assets/PLADECO.png"
+            alt="Logo PLADECO Olmué"
+            class="logo-pladeco"
+        >
+
+        <div class="encabezado-texto">
+            <p class="subtitulo">PLANIFICACIÓN TERRITORIAL</p>
+
+            <h1>Participación PLADECO Olmué</h1>
+
+            <p class="descripcion">
+                Cartera de Proyectos Municipales e Iniciativas Vecinales
+            </p>
+        </div>
+
+    </div>
+
+</header>
+
+    <main class="contenedor-principal">
+
+        <section class="panel-mapa">
+
+            <div class="barra-mapa">
+                <div>
+                    <h2>Mapa comunal</h2>
+                    <p>PLADECO Olmué 2027–2030</p>
+                </div>
+
+                <button
+                    id="btn-vista-inicial"
+                    type="button"
+                >
+                    Vista inicial
+                </button>
+            </div>
+
+            <div id="mapa"></div>
+
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <span class="simbolo leyenda-municipal"></span>
+                    <span>Proyectos Municipales</span>
+                </div>
+
+                <div class="leyenda-item">
+                    <span class="simbolo leyenda-vecinal"></span>
+                    <span>Iniciativas Vecinales</span>
+                </div>
+
+                <div class="leyenda-item">
+                    <span class="simbolo leyenda-limite"></span>
+                    <span>Límite comunal</span>
+                </div>
+            </div>
+
+        </section>
+
+
+<aside class="panel-proyectos">
+
+    <!-- MÓDULO 1: PROYECTOS MUNICIPALES -->
+    <section class="modulo-listado" id="modulo-proyectos">
+
+        <h2>Cartera de Proyectos</h2>
+
+        <label for="buscar-proyectos">Buscar proyecto</label>
+        <input
+            type="search"
+            id="buscar-proyectos"
+            class="filtro-listado"
+            placeholder="Buscar por ID o nombre..."
+        >
+
+        <div id="estado-carga" role="status">
+            Preparando mapa...
+        </div>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Proyecto</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabla-proyectos">
+                    <tr>
+                        <td colspan="2">Cargando proyectos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!-- SEPARADOR -->
+    <div class="separador-modulos"></div>
+
+    <!-- MÓDULO 2: INICIATIVAS VECINALES -->
+    <section class="modulo-listado" id="modulo-iniciativas">
+
+        <h2>Iniciativas Vecinales</h2>
+
+        <label for="buscar-iniciativas">Buscar iniciativa</label>
+        <input
+            type="search"
+            id="buscar-iniciativas"
+            class="filtro-listado"
+            placeholder="Buscar por nombre..."
+        >
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Iniciativa</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabla-iniciativas">
+                    <tr>
+                        <td colspan="2">
+                            Aún no hay iniciativas vecinales registradas.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+<button
+    id="btn-crear-iniciativa"
+    type="button"
+    class="boton-crear-iniciativa"
+>
+    + Crear iniciativa vecinal
+</button>
+
+
+    </section>
+
+
+<!-- FORMULARIO PARA CREAR INICIATIVAS VECINALES -->
+<div id="modal-iniciativa" class="modal-iniciativa" hidden>
+    <div class="modal-iniciativa-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-iniciativa">
+
+        <div class="modal-iniciativa-encabezado">
+            <div>
+                <h2 id="titulo-modal-iniciativa">Nueva iniciativa vecinal</h2>
+                <p>Propón una mejora para la comuna de Olmué.</p>
+            </div>
+
+            <button
+                type="button"
+                id="btn-cerrar-iniciativa"
+                class="btn-cerrar-iniciativa"
+                aria-label="Cerrar formulario"
+            >
+                &times;
+            </button>
+        </div>
+
+        <form id="formulario-iniciativa">
+
+            <label for="iniciativa-titulo">Nombre de la iniciativa *</label>
+            <input
+                type="text"
+                id="iniciativa-titulo"
+                name="titulo"
+                maxlength="150"
+                required
+                placeholder="Ej. Mejoramiento de plaza vecinal"
+            >
+
+            <label for="iniciativa-descripcion">Descripción *</label>
+            <textarea
+                id="iniciativa-descripcion"
+                name="descripcion"
+                rows="4"
+                maxlength="2000"
+                required
+                placeholder="Describe el problema y la mejora que propones."
+            ></textarea>
+
+            <label for="iniciativa-tipo">Tipo de geometría *</label>
+            <select id="iniciativa-tipo" name="tipo_geometria" required>
+                <option value="">Selecciona una opción</option>
+                <option value="punto">Punto: lugar específico</option>
+                <option value="linea">Línea: recorrido o tramo</option>
+                <option value="poligono">Polígono: área o superficie</option>
+            </select>
+
+            <label for="iniciativa-direccion">Dirección o referencia del lugar</label>
+            <input
+                type="text"
+                id="iniciativa-direccion"
+                name="direccion"
+                maxlength="250"
+                placeholder="Ej. Plaza, calle o sector"
+            >
+
+            <p id="estado-geometria-iniciativa" class="ayuda-geometria">
+                La ubicación en el mapa se configurará en el siguiente paso.
+            </p>
+
+<label for="iniciativa-nombre">Nombre de quien propone</label>
+<input
+    type="text"
+    id="iniciativa-nombre"
+    name="nombre"
+    autocomplete="name"
+    required
+>
+
+<label for="iniciativa-rut">RUT</label>
+<input
+    type="text"
+    id="iniciativa-rut"
+    name="rut"
+    placeholder="12.345.678-9"
+    autocomplete="off"
+    required
+>
+
+
+            <div class="modal-iniciativa-acciones">
+                <button type="button" id="btn-cancelar-iniciativa">
+                    Cancelar
+                </button>
+
+                <button type="submit" id="btn-enviar-iniciativa">
+                    Enviar propuesta
+                </button>
+            </div>
+
+            <p id="mensaje-formulario-iniciativa" role="status" aria-live="polite"></p>
+
+        </form>
+
+
+        <!-- CONFIRMACIÓN DE ENVÍO EXITOSO -->
+        <section
+            id="confirmacion-iniciativa"
+            class="confirmacion-iniciativa"
+            role="status"
+            aria-live="polite"
+            hidden
+        >
+            <div class="confirmacion-icono" aria-hidden="true">
+                ✓
+            </div>
+
+            <h2>¡Tu iniciativa fue enviada correctamente!</h2>
+
+            <p>
+                Gracias por participar en el desarrollo de Olmué.
+                Tu propuesta ha sido recibida y quedará pendiente
+                de revisión por parte del equipo municipal.
+            </p>
+
+            <p>
+                Una vez revisada y validada, podrá ser publicada
+                en el mapa de iniciativas de PLADECO para
+                que la comunidad pueda conocerla.
+            </p>
+
+            <div class="confirmacion-nota">
+                <strong>Importante</strong>
+                <p>
+                    Por ahora, tu iniciativa solo se muestra en tu
+                    sesión como comprobante de envío. Su visualización
+                    pública dependerá de la revisión y aprobación
+                    del equipo municipal.
+                </p>
+            </div>
+
+
+<div class="confirmacion-acciones">
+    <button
+        type="button"
+        id="btn-volver-listado"
+        class="btn-volver-listado"
+    >
+        ← Volver al listado de proyectos
+    </button>
+
+    <button
+        type="button"
+        id="btn-otra-iniciativa"
+        class="btn-otra-iniciativa"
+    >
+        + Ingresar otra iniciativa
+    </button>
+</div>
+
+        </section>
+
+
+    </div>
+</div>
+
+</aside>
+    </main>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/map.js"></script>
+
+
+</body>
+</html>
