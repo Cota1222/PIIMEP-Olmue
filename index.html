@@ -340,7 +340,8 @@ PÁGINA INFORMATIVA
 
                     Ingresa tus datos para conocer y
                     priorizar los proyectos PIIMEP
-                    de la comuna.
+                    de la comuna o para ingresar una 
+                    nueva Iniciativa PLADECO.
 
                 </p>
 
@@ -380,13 +381,13 @@ PÁGINA INFORMATIVA
     Participar en PIIMEP →
 </button>
 
+
 <a
     id="boton-participar-pladeco"
     href="pladeco/"
 >
     Participar en PLADECO →
 </a>
-
 
                 </form>
 
@@ -622,6 +623,31 @@ SCRIPTS
 
 <script src="js/app.js"></script>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const botonPladeco = document.getElementById("boton-participar-pladeco");
+    const formulario = document.getElementById("formulario-ingreso");
+
+    if (!botonPladeco || !formulario) return;
+
+    botonPladeco.addEventListener("click", function (evento) {
+        if (!formulario.checkValidity()) {
+            evento.preventDefault();
+            formulario.reportValidity();
+            return;
+        }
+
+        const nombre = document.getElementById("nombre").value.trim();
+        const direccion = document.getElementById("direccion").value.trim();
+
+        if (!nombre || !direccion) {
+            evento.preventDefault();
+            formulario.reportValidity();
+        }
+    });
+});
+</script>
 
 </body>
 
