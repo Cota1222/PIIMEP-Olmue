@@ -625,6 +625,8 @@ SCRIPTS
 <script src="js/app.js"></script>
 
 
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const botonPladeco = document.getElementById("boton-participar-pladeco");
@@ -632,7 +634,160 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!botonPladeco || !formulario) return;
 
+    const botonPiimep = formulario.querySelector('button[type="submit"]');
+
+    if (!botonPiimep) return;
+
+    // Período oficial, según la hora de Chile continental.
+    const APERTURA = "20261102000000";
+    const CIERRE = "20261202000000";
+
+    function obtenerFechaChile() {
+        const partes = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "America/Santiago",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hourCycle: "h23"
+        }).formatToParts(new Date());
+
+        const valores = {};
+
+        partes.forEach(function (parte) {
+            valores[parte.type] = parte.value;
+        });
+
+        return valores.year +
+            valores.month +
+            valores.day +
+            valores.hour +
+            valores.minute +
+            valores.second;
+    }
+
+    function participacionAbierta() {
+        const ahora = obtenerFechaChile();
+        return ahora >= APERTURA && ahora < CIERRE;
+    }
+
+    // Tooltip personalizado.
+    const tooltip = document.createElement("div");
+
+    tooltip.id = "tooltip-periodo-participacion";
+    tooltip.textContent =
+        "La participación estará disponible del 2 de noviembre " +
+        "al 1 de diciembre de 2026.";
+
+    Object.assign(tooltip.style, {
+        position: "fixed",
+        display: "none",
+        zIndex: "999999",
+        maxWidth: "280px",
+        padding: "10px 14px",
+        background: "#003B6D",
+        color: "#ffffff",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "13px",
+        lineHeight: "1.5",
+        borderRadius: "8px",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+        pointerEvents: "none"
+    });
+
+    document.body.appendChild(tooltip);
+
+    function mostrarTooltip(evento) {
+        if (participacionAbierta()) return;
+
+        tooltip.style.display = "block";
+
+        const margen = 12;
+        const ancho = tooltip.offsetWidth;
+        const alto = tooltip.offsetHeight;
+
+        let x = evento.clientX + margen;
+        let y = evento.clientY + margen;
+
+        if (x + ancho > window.innerWidth - margen) {
+            x = evento.clientX - ancho - margen;
+        }
+
+        if (y + alto > window.innerHeight - margen) {
+            y = evento.clientY - alto - margen;
+        }
+
+        tooltip.style.left = Math.max(margen, x) + "px";
+        tooltip.style.top = Math.max(margen, y) + "px";
+    }
+
+    function ocultarTooltip() {
+        tooltip.style.display = "none";
+    }
+
+    // Asociar el tooltip a ambos botones.
+    [botonPiimep, botonPladeco].forEach(function (boton) {
+        boton.addEventListener("mouseenter", mostrarTooltip);
+        boton.addEventListener("mousemove", mostrarTooltip);
+        boton.addEventListener("mouseleave", ocultarTooltip);
+        boton.addEventListener("blur", ocultarTooltip);
+
+        boton.addEventListener("focus", function () {
+            if (participacionAbierta()) return;
+
+            const rect = boton.getBoundingClientRect();
+
+            mostrarTooltip({
+                clientX: rect.left + rect.width / 2,
+                clientY: rect.top
+            });
+        });
+    });
+
+    function actualizarAcceso() {
+        const abierta = participacionAbierta();
+
+        // PIIMEP: conservar el botón como botón, pero bloquear el envío.
+        botonPiimep.disabled = false;
+        botonPiimep.setAttribute("aria-disabled", String(!abierta));
+        botonPiimep.classList.toggle("participacion-cerrada", !abierta);
+
+        // PLADECO: bloquear el enlace cuando el período esté cerrado.
+        botonPladeco.setAttribute("aria-disabled", String(!abierta));
+        botonPladeco.classList.toggle("participacion-cerrada", !abierta);
+        botonPladeco.style.pointerEvents = abierta ? "" : "auto";
+        botonPladeco.style.opacity = abierta ? "" : "0.55";
+        botonPladeco.style.cursor = abierta ? "" : "not-allowed";
+        botonPladeco.tabIndex = abierta ? 0 : -1;
+    }
+
+    // Impedir el envío de PIIMEP fuera del período.
+    formulario.addEventListener("submit", function (evento) {
+        if (!participacionAbierta()) {
+            evento.preventDefault();
+            actualizarAcceso();
+            return;
+        }
+
+        const nombre = document.getElementById("nombre").value.trim();
+        const direccion = document.getElementById("direccion").value.trim();
+
+        if (!nombre || !direccion) {
+            evento.preventDefault();
+            formulario.reportValidity();
+        }
+    });
+
+    // Impedir el acceso a PLADECO fuera del período.
     botonPladeco.addEventListener("click", function (evento) {
+        if (!participacionAbierta()) {
+            evento.preventDefault();
+            actualizarAcceso();
+            return;
+        }
+
         if (!formulario.checkValidity()) {
             evento.preventDefault();
             formulario.reportValidity();
@@ -647,9 +802,35 @@ document.addEventListener("DOMContentLoaded", function () {
             formulario.reportValidity();
         }
     });
+
+    // Evitar que el botón PIIMEP envíe el formulario estando cerrado.
+    botonPiimep.addEventListener("click", function (evento) {
+        if (!participacionAbierta()) {
+            evento.preventDefault();
+            evento.stopPropagation();
+        }
+    });
+
+    // Neutralizar el hover de ambos botones cuando estén bloqueados.
+    const estilos = document.createElement("style");
+
+    estilos.textContent = `
+        #formulario-ingreso button.participacion-cerrada,
+        #formulario-ingreso button.participacion-cerrada:hover,
+        #formulario-ingreso button.participacion-cerrada:focus,
+        #boton-participar-pladeco.participacion-cerrada,
+        #boton-participar-pladeco.participacion-cerrada:hover,
+        #boton-participar-pladeco.participacion-cerrada:focus {
+            opacity: 0.55 !important;
+            cursor: not-allowed !important;
+            filter: grayscale(0.35);
+            transform: none !important;
+            box-shadow: none !important;
+        }
+    `;
+
+    document.head.appendChild(estilos);
+
+    actualizarAcceso();
 });
 </script>
-
-</body>
-
-</html>
