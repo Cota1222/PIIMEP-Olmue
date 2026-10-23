@@ -1659,7 +1659,7 @@ button:focus-visible {
     display: none !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1050px) {
 
     .panel-dibujo-movil:not([hidden]) {
         display: block;
@@ -2128,5 +2128,305 @@ button:focus-visible {
 
     .leyenda-item {
         font-size: 0.7rem;
+    }
+}
+
+/* ==========================================
+   PLADECO — CELULAR EN ORIENTACIÓN HORIZONTAL
+   ========================================== */
+
+@media (orientation: landscape) and (max-width: 1050px) and (max-height: 600px) {
+
+    /* Ocupar el alto disponible de la pantalla */
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    /* Encabezado más compacto */
+    .encabezado {
+        flex: 0 0 auto;
+        padding: 4px 10px;
+        border-bottom-width: 2px;
+    }
+
+    .encabezado-contenido {
+        gap: 8px;
+        align-items: center;
+    }
+
+    .logo-pladeco {
+        width: 32px;
+        height: 32px;
+    }
+
+    .subtitulo {
+        display: none;
+    }
+
+    .encabezado h1 {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .descripcion {
+        display: none;
+    }
+
+    .boton-volver-inicio {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    /* Distribución exclusiva para celular horizontal */
+    .contenedor-principal {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 0;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+        gap: 0;
+        overflow: hidden;
+    }
+
+    /* El mapa ocupa el espacio disponible */
+    .panel-mapa {
+        display: flex;
+        flex: 1 1 0;
+        width: 100%;
+        height: auto;
+        min-width: 0;
+        min-height: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        overflow: hidden;
+    }
+
+    /* Ocultar el listado para priorizar el mapa */
+    .panel-proyectos {
+        display: none;
+    }
+
+    /* Barra superior compacta */
+    .barra-mapa {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 4px 10px;
+        gap: 8px;
+    }
+
+    .barra-mapa h2 {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    .barra-mapa p {
+        display: none;
+    }
+
+    #btn-vista-inicial {
+        padding: 5px 8px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    /* Leaflet ocupa el espacio restante bajo la barra */
+    #mapa {
+        width: 100%;
+        height: 0;
+        flex: 1 1 0;
+        min-height: 0;
+    }
+
+    /* Leyenda más pequeña */
+    .leyenda {
+        flex: 0 0 auto;
+        gap: 4px 10px;
+        padding: 5px 8px;
+    }
+
+    .leyenda-item {
+        gap: 4px;
+        font-size: 9px;
+        line-height: 1.2;
+    }
+
+    .leyenda-limite {
+        width: 14px;
+    }
+
+    /* Botón de crear iniciativa más discreto */
+    
+    /* Botón móvil de creación en horizontal */
+    #btn-crear-iniciativa-movil {
+        display: flex;
+        position: absolute;
+        z-index: 1100;
+
+        left: 50%;
+        bottom: 42px;
+        transform: translateX(-50%);
+
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        width: calc(100% - 24px);
+        max-width: 320px;
+        padding: 9px 12px;
+
+        border: none;
+        border-radius: 10px;
+
+        background-color: #2E7D32;
+        color: #FFFFFF;
+
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    #btn-crear-iniciativa-movil:active {
+        transform: translateX(-50%) scale(0.98);
+    }
+
+    #btn-crear-iniciativa-movil:hover {
+        background-color: #256428;
+    }
+
+
+    /* Controles Leaflet compactos */
+    #mapa .leaflet-control-zoom a {
+        width: 26px !important;
+        height: 26px !important;
+        line-height: 24px !important;
+    }
+
+    #mapa .leaflet-control-layers-toggle {
+        width: 28px !important;
+        height: 28px !important;
+        background-size: 18px 18px !important;
+    }
+}
+
+/* ==========================================
+   PLADECO — PANEL DE DIBUJO COMPACTO
+   SOLO EN MÓVIL HORIZONTAL
+   ========================================== */
+
+@media (orientation: landscape) and (max-width: 1050px) and (max-height: 600px) {
+
+    /* Panel inferior de herramientas */
+    .panel-dibujo-movil:not([hidden]) {
+        padding: 6px 12px 5px;
+        border-radius: 10px 10px 0 0;
+        max-height: 58vh;
+        overflow-y: auto;
+    }
+
+    /* Título */
+    .titulo-dibujo-movil {
+        margin: 0 0 5px;
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    /* Opciones de geometría */
+    .opciones-geometria-movil {
+        gap: 6px;
+    }
+
+    /* Botones de punto, línea y polígono */
+    .opcion-geometria-movil {
+        min-height: 42px;
+        padding: 4px 3px;
+        gap: 3px;
+        border-radius: 7px;
+        font-size: 11px;
+    }
+
+    /* Iconos */
+    .opcion-geometria-movil svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    /* Instrucciones */
+    .estado-dibujo-movil {
+        margin: 5px 0 0;
+        font-size: 10px;
+        line-height: 1.25;
+    }
+
+    /* Botón cancelar */
+    .btn-cancelar-dibujo-movil {
+        margin-top: 3px;
+        padding: 4px;
+        font-size: 11px;
+    }
+}
+
+/* ==========================================
+   FORMULARIO FLOTANTE MÁS COMPACTO — VERTICAL
+   ========================================== */
+
+@media (orientation: portrait) and (max-width: 768px) {
+
+    .modal-iniciativa-movil-mapa {
+        padding: 10px !important;
+    }
+
+    .modal-iniciativa-movil-mapa .modal-iniciativa-contenido {
+        width: 100% !important;
+        max-width: 390px !important;
+        max-height: 76dvh !important;
+
+        padding: 10px 12px !important;
+        border-radius: 14px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa {
+        gap: 5px !important;
+        padding: 0 0 6px !important;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa h2,
+    .modal-iniciativa-movil-mapa #formulario-iniciativa h3 {
+        margin: 2px 0 4px !important;
+        line-height: 1.2;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa p {
+        margin: 2px 0 4px !important;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa label {
+        margin-bottom: 2px !important;
+        font-size: 12px;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa input,
+    .modal-iniciativa-movil-mapa #formulario-iniciativa select,
+    .modal-iniciativa-movil-mapa #formulario-iniciativa textarea {
+        padding: 6px 8px !important;
+        font-size: 13px;
+    }
+
+    .modal-iniciativa-movil-mapa #formulario-iniciativa textarea {
+        min-height: 55px;
     }
 }

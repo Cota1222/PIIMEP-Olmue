@@ -2940,9 +2940,12 @@ if (botonTerminarDibujoMovil) {
             tipoGeometriaMovil = tipo;
 
             actualizarSeleccionGeometriaMovil(tipo);
+
 if (botonTerminarDibujoMovil) {
     botonTerminarDibujoMovil.hidden = tipo !== "linea";
 }
+
+activarDibujoIniciativa(tipo);
             activarDibujoIniciativa(tipo);
 
             if (estadoDibujoMovil) {
