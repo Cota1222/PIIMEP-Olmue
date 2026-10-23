@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mapa de proyectos | PLADECO Olmué 2027–2030</title>
+    <title>PLADECO Participa</title>
 
     <link
     rel="icon"
@@ -65,21 +65,97 @@
 
         <section class="panel-mapa">
 
-            <div class="barra-mapa">
-                <div>
-                    <h2>Mapa comunal</h2>
-                    <p>PLADECO Olmué 2027–2030</p>
-                </div>
+<div class="barra-mapa">
+    <div class="barra-mapa-titulo">
+        <h2>Mapa comunal</h2>
+        <p>PLADECO Olmué 2027–2030</p>
+    </div>
 
-                <button
-                    id="btn-vista-inicial"
-                    type="button"
-                >
-                    Vista inicial
-                </button>
-            </div>
+    <button
+        id="btn-vista-inicial"
+        type="button"
+    >
+        Vista inicial
+    </button>
+</div>
+
 
             <div id="mapa"></div>
+
+            <button
+    id="btn-crear-iniciativa-movil"
+    class="boton-crear-iniciativa-movil"
+    type="button"
+>
+    + Crear iniciativa vecinal
+</button>
+
+
+<!-- BARRA MÓVIL PARA SELECCIONAR GEOMETRÍA -->
+<div id="panel-dibujo-movil" class="panel-dibujo-movil" hidden>
+    <p class="titulo-dibujo-movil">Seleccionar geometría</p>
+
+    <div class="opciones-geometria-movil">
+        <button
+            type="button"
+            class="opcion-geometria-movil"
+            data-geometria="punto"
+            aria-label="Dibujar un punto"
+            aria-pressed="false"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="5" />
+            </svg>
+            <span>Punto</span>
+        </button>
+
+        <button
+            type="button"
+            class="opcion-geometria-movil"
+            data-geometria="linea"
+            aria-label="Dibujar una línea"
+            aria-pressed="false"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="4,18 10,7 15,14 20,5" />
+            </svg>
+            <span>Línea</span>
+        </button>
+
+        <button
+            type="button"
+            class="opcion-geometria-movil"
+            data-geometria="poligono"
+            aria-label="Dibujar un polígono"
+            aria-pressed="false"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <polygon points="12,3 21,9 18,20 6,20 3,9" />
+            </svg>
+            <span>Polígono</span>
+        </button>
+    </div>
+
+    <p
+        id="estado-dibujo-movil"
+        class="estado-dibujo-movil"
+        role="status"
+        aria-live="polite"
+    >
+        Elige una geometría para dibujar en el mapa.
+    </p>
+
+    <button
+        type="button"
+        id="btn-cancelar-dibujo-movil"
+        class="btn-cancelar-dibujo-movil"
+    >
+        Cancelar
+    </button>
+</div>
+
+
+</div>
 
             <div class="leyenda">
                 <div class="leyenda-item">
@@ -350,12 +426,16 @@
     </main>
 
 
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/map.js"></script>
+
 
 
 </body>

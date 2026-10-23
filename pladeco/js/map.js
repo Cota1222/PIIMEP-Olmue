@@ -47,6 +47,9 @@ let elementosProyectos = [];
 let capaDibujoTemporal = null;
 let herramientaDibujoActiva = null;
 let geometriaIniciativaTemporal = null;
+// Control del flujo móvil de creación de iniciativas.
+let modoCreacionMovil = false;
+let tipoGeometriaMovil = "";
 // Iniciativas enviadas durante la sesión actual.
 let capaIniciativasEnviadas = null;
 
@@ -105,6 +108,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     inicializarMapa();
 
+    configurarBuscadorDirecciones();
+
     inicializarSupabase();
 
     cargarLimiteComunal();
@@ -162,6 +167,288 @@ function inicializarSupabase() {
 
     console.log("Cliente Supabase inicializado.");
 }
+
+
+ // ======================================================
+// APOYOS CIUDADANOS
+// ======================================================
+
+let visitanteIdApoyos = null;
+
+// Obtener un identificador persistente para este navegador.
+function obtenerVisitanteIdApoyos() {
+
+    if (visitanteIdApoyos) {
+        return visitanteIdApoyos;
+    }
+
+    const clave = "pladeco_visitante_id";
+
+    try {
+
+        let id = localStorage.getItem(clave);
+
+        if (!id) {
+
+            if (
+                !window.crypto ||
+                typeof window.crypto.randomUUID !== "function"
+            ) {
+                throw new Error(
+                    "El navegador no permite generar un identificador UUID."
+                );
+            }
+
+            id = window.crypto.randomUUID();
+
+            localStorage.setItem(clave, id);
+        }
+
+        visitanteIdApoyos = id;
+
+        return visitanteIdApoyos;
+
+    } catch (error) {
+
+        console.error(
+            "No se pudo recuperar el identificador del visitante:",
+            error
+        );
+
+        throw new Error(
+            "No se pudo identificar este navegador. Revisa la configuración de privacidad."
+        );
+
+    }
+}
+
+
+// Consultar el total de apoyos de un elemento.
+async function obtenerTotalApoyos(tipo, elementoId) {
+
+    if (!supabaseCliente) {
+        throw new Error("Supabase no está inicializado.");
+    }
+
+    const { data, error } = await supabaseCliente
+        .from("v_apoyos_conteo")
+        .select("total_apoyos")
+        .eq("tipo_elemento", tipo)
+        .eq("elemento_id", String(elementoId))
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    return Number(data?.total_apoyos ?? 0);
+}
+
+
+// Registrar un apoyo en Supabase.
+async function registrarApoyo(tipo, elementoId) {
+
+    if (!supabaseCliente) {
+        throw new Error("Supabase no está inicializado.");
+    }
+
+    const visitanteId = obtenerVisitanteIdApoyos();
+
+    const { error } = await supabaseCliente
+        .from("Apoyos")
+        .insert({
+            tipo_elemento: tipo,
+            elemento_id: String(elementoId),
+            visitante_id: visitanteId
+        });
+
+    if (error) {
+
+        // La restricción única impide repetir un apoyo
+        // del mismo visitante para el mismo elemento.
+        if (error.code === "23505") {
+            return {
+                registrado: false,
+                duplicado: true
+            };
+        }
+
+        throw error;
+    }
+
+    return {
+        registrado: true,
+        duplicado: false
+    };
+}
+
+
+// Recordar en este navegador qué elementos ya se apoyaron.
+function apoyoGuardadoLocalmente(tipo, elementoId) {
+
+    try {
+
+        return localStorage.getItem(
+            "pladeco_apoyo_" + tipo + "_" + String(elementoId)
+        ) === "si";
+
+    } catch (_) {
+
+        return false;
+
+    }
+}
+
+
+function guardarApoyoLocalmente(tipo, elementoId) {
+
+    try {
+
+        localStorage.setItem(
+            "pladeco_apoyo_" + tipo + "_" + String(elementoId),
+            "si"
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "No se pudo guardar el estado local del apoyo:",
+            error
+        );
+
+    }
+}
+
+
+ // ======================================================
+// CONSTRUIR BOTÓN Y CONTADOR DE APOYOS
+// ======================================================
+
+
+async function prepararBotonApoyo(tipo, elementoId, contenedor) {
+
+    const boton = contenedor.querySelector(".btn-apoyo");
+    const contador = contenedor.querySelector(".contador-apoyos");
+    const mensaje = contenedor.querySelector(".mensaje-apoyo");
+
+    if (!boton || !contador || !mensaje) {
+        return;
+    }
+
+    // Mostrar el ícono blanco junto al texto del botón.
+    function establecerContenidoBoton(texto) {
+        const icono = `
+            <svg
+                class="icono-boton-apoyo"
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <path d="M7 10v12H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h3Z"/>
+                <path d="M7 10l5-8a3 3 0 0 1 3 3l-1 5h5.5a3 3 0 0 1 2.9 3.8l-2.1 8a3 3 0 0 1-2.9 2.2H7"/>
+            </svg>
+        `;
+
+        boton.replaceChildren();
+
+        const plantilla = document.createElement("span");
+        plantilla.innerHTML = icono;
+
+        boton.appendChild(plantilla.firstElementChild);
+
+        const textoBoton = document.createElement("span");
+        textoBoton.textContent = texto;
+
+        boton.appendChild(textoBoton);
+    }
+
+    boton.disabled = true;
+    establecerContenidoBoton("Cargando...");
+    mensaje.textContent = "";
+
+    try {
+
+        const total = await obtenerTotalApoyos(tipo, elementoId);
+        const yaApoyo = apoyoGuardadoLocalmente(tipo, elementoId);
+
+        contador.textContent = String(total);
+
+        establecerContenidoBoton(
+            yaApoyo ? "Apoyo registrado" : "Apoyar"
+        );
+
+        boton.disabled = yaApoyo;
+
+    } catch (error) {
+
+        console.error("Error al cargar apoyos:", error);
+
+        contador.textContent = "—";
+        establecerContenidoBoton("No disponible");
+        mensaje.textContent = "No se pudo cargar el conteo.";
+
+        return;
+    }
+
+    boton.addEventListener("click", async function () {
+
+        if (boton.disabled) {
+            return;
+        }
+
+        boton.disabled = true;
+        establecerContenidoBoton("Registrando...");
+        mensaje.textContent = "";
+
+        try {
+
+            const resultado = await registrarApoyo(tipo, elementoId);
+
+            if (resultado.duplicado) {
+
+                guardarApoyoLocalmente(tipo, elementoId);
+
+                establecerContenidoBoton("Apoyo registrado");
+                mensaje.textContent =
+                    "Este navegador ya había apoyado este elemento.";
+
+            } else {
+
+                guardarApoyoLocalmente(tipo, elementoId);
+
+                const nuevoTotal = await obtenerTotalApoyos(tipo, elementoId);
+
+                contador.textContent = String(nuevoTotal);
+                establecerContenidoBoton("Apoyo registrado");
+                mensaje.textContent = "¡Gracias por tu apoyo!";
+
+            }
+
+        } catch (error) {
+
+            console.error("Error al registrar el apoyo:", error);
+
+            boton.disabled = false;
+            establecerContenidoBoton("Reintentar");
+
+            mensaje.textContent =
+                "No se pudo registrar el apoyo. Inténtalo nuevamente.";
+
+        }
+
+    });
+
+}
+
+
 
 // ======================================================
 // CARGAR INICIATIVAS VECINALES PUBLICADAS
@@ -349,6 +636,7 @@ async function cargarIniciativasVecinales() {
 // POPUP DE INICIATIVA VECINAL
 // ======================================================
 
+
 function mostrarPopupIniciativa(registro) {
 
     const propiedades = registro.propiedades;
@@ -361,10 +649,8 @@ function mostrarPopupIniciativa(registro) {
         ? escaparHTML(propiedades.direccion)
         : "Sin referencia de ubicación.";
 
-    const numero = registro.numero_iniciativa;
-
     const contenido = `
-        <div class="popup-proyecto">
+        <div class="popup-proyecto popup-con-apoyo">
 
             <div class="popup-proyecto-encabezado">
 
@@ -373,8 +659,10 @@ function mostrarPopupIniciativa(registro) {
                 </div>
 
                 <div class="popup-proyecto-id">
-    ID ${registro.numero_iniciativa ?? registro.id}
-</div>
+                    ID ${escaparHTML(
+                        registro.numero_iniciativa ?? registro.id
+                    )}
+                </div>
 
             </div>
 
@@ -389,8 +677,28 @@ function mostrarPopupIniciativa(registro) {
                 ${direccion}
             </p>
 
-            <div class="popup-proyecto-acento"
-                 style="background-color: ${COLOR_VECINAL};">
+            <div
+                class="popup-proyecto-acento"
+                style="background-color: ${COLOR_VECINAL};"
+            ></div>
+
+            <div class="bloque-apoyo">
+
+                <button
+                    type="button"
+                    class="btn-apoyo"
+                    disabled
+                >
+                    👍 Cargando...
+                </button>
+
+                <span class="texto-conteo-apoyos">
+                    Apoyos:
+                    <strong class="contador-apoyos">—</strong>
+                </span>
+
+                <p class="mensaje-apoyo" aria-live="polite"></p>
+
             </div>
 
         </div>
@@ -412,7 +720,18 @@ function mostrarPopupIniciativa(registro) {
     .setContent(contenido)
     .openOn(mapa);
 
+    const popupAbierto = mapa.getPopup();
+
+    if (popupAbierto) {
+        prepararBotonApoyo(
+            "iniciativa",
+            registro.id,
+            popupAbierto.getElement()
+        );
+    }
+
 }
+
 
 
 // ======================================================
@@ -933,51 +1252,276 @@ mapa.on("click", function (evento) {
 
 });
 
-    // Capturar la geometría creada con Leaflet.draw.
+    
 
 mapa.on(L.Draw.Event.CREATED, function (evento) {
-  const tipo = document.getElementById("iniciativa-tipo")?.value;
-  const verde = "#2E7D32";
 
-  let capaFinal = evento.layer;
+    const selectorEscritorio =
+        document.getElementById("iniciativa-tipo");
 
-  if (tipo === "punto") {
-    // Convertir el marcador en un círculo verde.
-    capaFinal = L.circleMarker(evento.layer.getLatLng(), {
-      radius: 7,
-      color: verde,
-      weight: 2,
-      opacity: 1,
-      fillColor: verde,
-      fillOpacity: 0.9
-    });
+    const selectorMovil =
+        document.getElementById("tipo-dibujo-movil");
 
-  } else if (tipo === "linea") {
-    capaFinal.setStyle({
-      color: verde,
-      weight: 4,
-      opacity: 0.9
-    });
+    const estadoEscritorio =
+        document.getElementById("estado-geometria-iniciativa");
 
-  } else if (tipo === "poligono") {
-    capaFinal.setStyle({
-      color: verde,
-      weight: 3,
-      opacity: 0.9,
-      fillColor: verde,
-      fillOpacity: 0.25
-    });
-  }
+    const estadoMovil =
+        document.getElementById("estado-dibujo-movil");
 
-  capaDibujoTemporal.clearLayers();
-  capaDibujoTemporal.addLayer(capaFinal);
+    const tipo = modoCreacionMovil
+        ? tipoGeometriaMovil
+        : selectorEscritorio?.value;
 
-  geometriaIniciativaTemporal = capaFinal.toGeoJSON().geometry;
-});
+    const estado = modoCreacionMovil
+        ? estadoMovil
+        : estadoEscritorio;
 
+    // Invalidar cualquier geometría anterior antes de validar.
+    geometriaIniciativaTemporal = null;
 
+    if (capaDibujoTemporal) {
+        capaDibujoTemporal.clearLayers();
+    }
+
+    // Verificar que Turf.js esté disponible.
+    if (typeof turf === "undefined") {
+
+        if (estado) {
+            estado.textContent =
+                "No se pudo cargar la validación geográfica. Recarga la página.";
+        }
+
+        console.error("Turf.js no está disponible.");
+        return;
+    }
+
+    // Verificar que el límite comunal esté cargado.
+    if (
+        !capaLimiteComunal ||
+        capaLimiteComunal.getLayers().length === 0
+    ) {
+
+        if (estado) {
+            estado.textContent =
+                "El límite comunal aún no está disponible. Inténtalo nuevamente.";
+        }
+
+        console.error("No está cargado el límite comunal.");
+        return;
+    }
+
+    if (!["punto", "linea", "poligono"].includes(tipo)) {
+
+        if (estado) {
+            estado.textContent =
+                "Selecciona un tipo de geometría válido antes de dibujar.";
+        }
+
+        return;
+    }
+
+    const geometriaDibujada = evento.layer.toGeoJSON();
+    const limite = capaLimiteComunal.toGeoJSON();
+
+    try {
+
+        // Extraer los polígonos del límite comunal.
+        const poligonos = [];
+
+        function extraerPoligonos(elemento) {
+
+            if (!elemento) return;
+
+            if (elemento.type === "FeatureCollection") {
+
+                elemento.features.forEach(extraerPoligonos);
+
+            } else if (elemento.type === "Feature") {
+
+                extraerPoligonos(elemento.geometry);
+
+            } else if (
+                elemento.type === "Polygon" ||
+                elemento.type === "MultiPolygon"
+            ) {
+
+                poligonos.push(turf.feature(elemento));
+
+            }
+        }
+
+        extraerPoligonos(limite);
+
+        if (poligonos.length === 0) {
+            throw new Error(
+                "El límite comunal no contiene polígonos válidos."
+            );
+        }
+
+        // Unificar las partes del límite comunal.
+        let cobertura = poligonos[0];
+
+        for (let i = 1; i < poligonos.length; i++) {
+
+            cobertura = turf.union(
+                turf.featureCollection([
+                    cobertura,
+                    poligonos[i]
+                ])
+            );
+
+        }
+
+        if (!cobertura) {
+            throw new Error(
+                "No fue posible procesar el límite comunal."
+            );
+        }
+
+        // Comprobar que la geometría esté dentro del límite.
+        const dentroDelLimite = turf.booleanWithin(
+            geometriaDibujada,
+            cobertura
+        );
+
+        
+if (!dentroDelLimite) {
+
+    if (estado) {
+        estado.textContent =
+            "La geometría debe quedar completamente dentro del límite comunal de Olmué. Selecciona una opción e inténtalo nuevamente.";
+    }
+
+    // Descartar completamente la geometría inválida.
+    geometriaIniciativaTemporal = null;
+
+    if (capaDibujoTemporal) {
+        capaDibujoTemporal.clearLayers();
+    }
+
+    // En móvil, desmarcar los tres botones.
+    if (modoCreacionMovil) {
+
+        tipoGeometriaMovil = "";
+
+        document.querySelectorAll(
+            ".opcion-geometria-movil"
+            
+        ).forEach(function (boton) {
+            boton.setAttribute("aria-pressed", "false");
+        });
+
+        if (estadoMovil) {
+            estadoMovil.textContent =
+                "La ubicación quedó fuera del límite de Olmué. Elige una geometría para intentarlo nuevamente.";
+        }
+
+    } else if (selectorEscritorio) {
+
+        selectorEscritorio.value = "";
+
+    }
+
+    return;
 }
 
+
+        // Aplicar simbología verde a la geometría validada.
+        let capaFinal = evento.layer;
+
+        if (tipo === "punto") {
+
+            capaFinal = L.circleMarker(
+                evento.layer.getLatLng(),
+                {
+                    radius: 7,
+                    color: "#2E7D32",
+                    weight: 2,
+                    opacity: 1,
+                    fillColor: "#2E7D32",
+                    fillOpacity: 0.9
+                }
+            );
+
+        } else if (tipo === "linea") {
+
+            capaFinal.setStyle({
+                color: "#2E7D32",
+                weight: 4,
+                opacity: 0.9
+            });
+
+        } else if (tipo === "poligono") {
+
+            capaFinal.setStyle({
+                color: "#2E7D32",
+                weight: 3,
+                opacity: 0.9,
+                fillColor: "#2E7D32",
+                fillOpacity: 0.25
+            });
+
+        }
+
+        capaDibujoTemporal.clearLayers();
+        capaDibujoTemporal.addLayer(capaFinal);
+
+        // Guardar únicamente la geometría validada.
+        geometriaIniciativaTemporal =
+            capaFinal.toGeoJSON().geometry;
+
+        if (estado) {
+            estado.textContent =
+                "Ubicación válida: la iniciativa está dentro del límite comunal de Olmué.";
+        }
+
+        // En móvil, pasar al formulario después de validar.
+        if (modoCreacionMovil) {
+            abrirFormularioDesdeDibujoMovil(tipo);
+        }
+
+    
+} catch (error) {
+
+    console.error("Error validando la geometría:", error);
+
+    geometriaIniciativaTemporal = null;
+
+    if (capaDibujoTemporal) {
+        capaDibujoTemporal.clearLayers();
+    }
+
+    if (estado) {
+        estado.textContent =
+            "No se pudo validar la ubicación. Inténtalo nuevamente.";
+    }
+
+    if (modoCreacionMovil) {
+
+        tipoGeometriaMovil = "";
+
+        document.querySelectorAll(
+            ".opcion-geometria-movil"
+        ).forEach(function (boton) {
+            boton.setAttribute("aria-pressed", "false");
+        });
+
+        if (estadoMovil) {
+            estadoMovil.textContent =
+                "No se pudo validar el dibujo. Selecciona una geometría para intentarlo nuevamente.";
+        }
+
+    } else if (selectorEscritorio) {
+
+        selectorEscritorio.value = "";
+
+    }
+
+
+    }
+
+});
+}
 
 // ======================================================
 // 5. CARGAR LÍMITE COMUNAL
@@ -1700,8 +2244,9 @@ if (
 // ======================================
 
 
+
 const contenidoPopup = `
-    <div class="popup-proyecto">
+    <div class="popup-proyecto popup-con-apoyo">
 
         <div class="popup-proyecto-encabezado">
 
@@ -1721,6 +2266,23 @@ const contenidoPopup = `
 
         <div class="popup-proyecto-acento"></div>
 
+        <div class="bloque-apoyo">
+            <button
+                type="button"
+                class="btn-apoyo"
+                disabled
+            >
+                👍 Cargando...
+            </button>
+
+            <span class="texto-conteo-apoyos">
+                Apoyos:
+                <strong class="contador-apoyos">—</strong>
+            </span>
+
+            <p class="mensaje-apoyo" aria-live="polite"></p>
+        </div>
+
     </div>
 `;
 
@@ -1737,7 +2299,17 @@ if (centroPopup) {
     })
     .setLatLng(centroPopup)
     .setContent(contenidoPopup)
-    .openOn(mapa);
+.openOn(mapa);
+
+const elementoPopup = document.querySelector(".leaflet-popup");
+
+if (elementoPopup) {
+    prepararBotonApoyo(
+        "proyecto",
+        registro.id,
+        elementoPopup
+    );
+}
 
 }
 }
@@ -1946,12 +2518,37 @@ function activarDibujoIniciativa(tipo) {
 
   } else if (tipo === "linea") {
     herramientaDibujoActiva = new L.Draw.Polyline(mapa, {
-      shapeOptions: {
-        color: verde,
-        weight: 4,
-        opacity: 0.9
-      }
+        shapeOptions: {
+            color: verde,
+            weight: 4,
+            opacity: 0.9
+        }
     });
+
+    // En móviles, finalizar la línea con doble clic,
+    // igual que el mecanismo utilizado por los polígonos.
+    if (modoCreacionMovil) {
+        herramientaDibujoActiva._updateFinishHandler = function () {
+            const cantidad = this._markers.length;
+
+            if (cantidad > 1) {
+                this._markers[cantidad - 1].on(
+                    "dblclick",
+                    this._finishShape,
+                    this
+                );
+
+                if (cantidad > 2) {
+                    this._markers[cantidad - 2].off(
+                        "dblclick",
+                        this._finishShape,
+                        this
+                    );
+                }
+            }
+        };
+    }
+  
 
   } else if (tipo === "poligono") {
     herramientaDibujoActiva = new L.Draw.Polygon(mapa, {
@@ -2000,6 +2597,140 @@ function cancelarDibujoIniciativa() {
 }
 
 
+/**
+ * Abre el formulario móvil después de validar la geometría.
+ * Conserva la ubicación dibujada y superpone el formulario al mapa.
+ */
+function abrirFormularioDesdeDibujoMovil(tipo) {
+
+    const modal = document.getElementById("modal-iniciativa");
+    const formulario = document.getElementById("formulario-iniciativa");
+    const selectorTipo = document.getElementById("iniciativa-tipo");
+    const panelDibujo = document.getElementById("panel-dibujo-movil");
+    const mensaje = document.getElementById("mensaje-formulario-iniciativa");
+    const confirmacion = document.getElementById("confirmacion-iniciativa");
+    const panelMapa = document.querySelector(".panel-mapa");
+
+    if (
+        !modal ||
+        !formulario ||
+        !selectorTipo ||
+        !panelDibujo ||
+        !panelMapa ||
+        !geometriaIniciativaTemporal
+    ) {
+        console.error(
+            "No se puede abrir el formulario: faltan elementos o una geometría válida."
+        );
+        return;
+    }
+
+    // Preparar los campos sin borrar la geometría validada.
+    formulario.reset();
+    selectorTipo.value = tipo;
+
+    formulario.hidden = false;
+
+    if (confirmacion) {
+        confirmacion.hidden = true;
+    }
+
+    if (mensaje) {
+        mensaje.textContent = "";
+    }
+
+    const estadoGeometria = document.getElementById(
+        "estado-geometria-iniciativa"
+    );
+
+    if (estadoGeometria) {
+        estadoGeometria.textContent =
+            "Ubicación validada dentro de Olmué. Puedes completar los datos de tu iniciativa.";
+    }
+
+    // Ocultar el selector y mostrar el formulario.
+    panelDibujo.hidden = true;
+
+    // Mover el modal dentro del área del mapa para poder superponerlo.
+    panelMapa.appendChild(modal);
+
+    modal.classList.add("modal-iniciativa-movil-mapa");
+    modal.hidden = false;
+
+    const panelProyectos = document.querySelector(".panel-proyectos");
+
+    if (panelProyectos) {
+        panelProyectos.classList.add("creando-iniciativa");
+    }
+
+    if (mapa) {
+        setTimeout(function () {
+            mapa.invalidateSize();
+        }, 100);
+    }
+}
+
+function abrirFormularioDesdeDibujoMovil(tipo) {
+
+    const modal = document.getElementById("modal-iniciativa");
+    const formulario = document.getElementById("formulario-iniciativa");
+    const selectorTipo = document.getElementById("iniciativa-tipo");
+    const panelDibujo = document.getElementById("panel-dibujo-movil");
+    const panelMapa = document.querySelector(".panel-mapa");
+    const mensaje = document.getElementById("mensaje-formulario-iniciativa");
+    const estado = document.getElementById("estado-geometria-iniciativa");
+    const confirmacion = document.getElementById("confirmacion-iniciativa");
+    const panelProyectos = document.querySelector(".panel-proyectos");
+
+    if (
+        !modal ||
+        !formulario ||
+        !selectorTipo ||
+        !panelDibujo ||
+        !panelMapa ||
+        !geometriaIniciativaTemporal
+    ) {
+        console.error("No se puede abrir el formulario móvil: falta la geometría o un elemento.");
+        return;
+    }
+
+    // Conservar la geometría validada.
+    formulario.reset();
+    selectorTipo.value = tipo;
+    formulario.hidden = false;
+
+    if (confirmacion) confirmacion.hidden = true;
+    if (mensaje) mensaje.textContent = "";
+
+    if (estado) {
+        estado.textContent =
+            "Ubicación validada dentro de Olmué.";
+    }
+
+    panelDibujo.hidden = true;
+
+    // Superponer el formulario al área del mapa.
+    panelMapa.appendChild(modal);
+    modal.classList.add("modal-iniciativa-movil-mapa");
+    modal.hidden = false;
+
+    if (panelProyectos) {
+        panelProyectos.classList.add("creando-iniciativa");
+    }
+
+    // El dibujo ya terminó; los cambios posteriores del formulario
+    // deben seguir el comportamiento habitual de escritorio.
+    modoCreacionMovil = false;
+    tipoGeometriaMovil = "";
+    herramientaDibujoActiva = null;
+
+    if (mapa) {
+        setTimeout(function () {
+            mapa.invalidateSize();
+        }, 100);
+    }
+}
+
 
 function configurarFormularioIniciativa() {
 
@@ -2038,6 +2769,56 @@ function configurarFormularioIniciativa() {
         return;
     }
 
+const botonAbrirMovil = document.getElementById(
+    "btn-crear-iniciativa-movil"
+);
+
+const panelDibujoMovil = document.getElementById(
+    "panel-dibujo-movil"
+);
+
+
+const opcionesGeometriaMovil = document.querySelectorAll(
+    ".opcion-geometria-movil"
+);
+
+const estadoDibujoMovil = document.getElementById(
+    "estado-dibujo-movil"
+);
+
+const botonCancelarDibujoMovil = document.getElementById(
+    "btn-cancelar-dibujo-movil"
+);
+
+const botonTerminarDibujoMovil = document.getElementById(
+    "btn-terminar-dibujo-movil"
+);
+
+// Terminar manualmente una línea dibujada desde el celular.
+if (botonTerminarDibujoMovil) {
+    botonTerminarDibujoMovil.addEventListener("click", function () {
+        if (
+            !modoCreacionMovil ||
+            tipoGeometriaMovil !== "linea" ||
+            !herramientaDibujoActiva
+        ) {
+            return;
+        }
+
+        const marcadores = herramientaDibujoActiva._markers;
+
+        if (!marcadores || marcadores.length < 2) {
+            if (estadoDibujoMovil) {
+                estadoDibujoMovil.textContent =
+                    "Marca al menos dos puntos para terminar la línea.";
+            }
+            return;
+        }
+
+        herramientaDibujoActiva.completeShape();
+    });
+}
+
     // Restablecer el formulario y limpiar solamente el dibujo temporal.
     function prepararFormularioNuevo() {
 
@@ -2064,6 +2845,135 @@ function configurarFormularioIniciativa() {
         }
     }
 
+
+ 
+    // ==========================================
+    // FLUJO EXCLUSIVO PARA MÓVILES
+    // ==========================================
+
+    function actualizarSeleccionGeometriaMovil(tipoSeleccionado) {
+        opcionesGeometriaMovil.forEach(function (opcion) {
+            opcion.setAttribute(
+                "aria-pressed",
+                opcion.dataset.geometria === tipoSeleccionado
+                    ? "true"
+                    : "false"
+            );
+        });
+    }
+
+    function cancelarFlujoMovil() {
+        modoCreacionMovil = false;
+        tipoGeometriaMovil = "";
+
+        cancelarDibujoIniciativa();
+
+        if (panelDibujoMovil) {
+            panelDibujoMovil.hidden = true;
+        }
+        if (botonTerminarDibujoMovil) {
+    botonTerminarDibujoMovil.hidden = true;
+}
+
+        actualizarSeleccionGeometriaMovil("");
+
+        modal.hidden = true;
+        modal.classList.remove("modal-iniciativa-movil-mapa");
+
+        if (modal.parentElement !== panelProyectos) {
+            panelProyectos.appendChild(modal);
+        }
+
+        panelProyectos.classList.remove("creando-iniciativa");
+
+        if (mapa) {
+            setTimeout(function () {
+                mapa.invalidateSize();
+            }, 100);
+        }
+    }
+
+    // Abrir la barra inferior.
+    if (botonAbrirMovil && panelDibujoMovil) {
+        botonAbrirMovil.addEventListener("click", function () {
+            prepararFormularioNuevo();
+
+            modoCreacionMovil = true;
+            tipoGeometriaMovil = "";
+
+            modal.hidden = true;
+            modal.classList.remove("modal-iniciativa-movil-mapa");
+
+            if (modal.parentElement !== panelProyectos) {
+                panelProyectos.appendChild(modal);
+            }
+
+            actualizarSeleccionGeometriaMovil("");
+
+            panelDibujoMovil.hidden = false;
+
+            if (estadoDibujoMovil) {
+                estadoDibujoMovil.textContent =
+                    "Elige una geometría para dibujar en el mapa.";
+            }
+
+            if (mapa) {
+                setTimeout(function () {
+                    mapa.invalidateSize();
+                }, 100);
+            }
+        });
+    }
+
+    // Seleccionar punto, línea o polígono.
+    opcionesGeometriaMovil.forEach(function (boton) {
+        boton.addEventListener("click", function () {
+            const tipo = boton.dataset.geometria;
+
+            if (!["punto", "linea", "poligono"].includes(tipo)) {
+                return;
+            }
+
+            cancelarDibujoIniciativa();
+
+            modoCreacionMovil = true;
+            tipoGeometriaMovil = tipo;
+
+            actualizarSeleccionGeometriaMovil(tipo);
+if (botonTerminarDibujoMovil) {
+    botonTerminarDibujoMovil.hidden = tipo !== "linea";
+}
+            activarDibujoIniciativa(tipo);
+
+            if (estadoDibujoMovil) {
+                const instrucciones = {
+                    punto: "Toca el lugar del mapa donde irá la iniciativa.",
+                    linea: "Marca los puntos del recorrido y termina el dibujo.",
+                    poligono: "Marca los vértices del área y termina el dibujo."
+                };
+
+                estadoDibujoMovil.textContent = instrucciones[tipo];
+            }
+        });
+    });
+
+    if (botonCancelarDibujoMovil) {
+        botonCancelarDibujoMovil.addEventListener(
+            "click",
+            cancelarFlujoMovil
+        );
+    }
+
+    // Asegurar que el botón de escritorio use el modal en su panel original.
+    modoCreacionMovil = false;
+    tipoGeometriaMovil = "";
+
+    modal.classList.remove("modal-iniciativa-movil-mapa");
+
+    if (modal.parentElement !== panelProyectos) {
+        panelProyectos.appendChild(modal);
+    }
+
     // Abrir el formulario desde el listado.
     botonAbrir.addEventListener("click", function () {
 
@@ -2082,7 +2992,18 @@ function configurarFormularioIniciativa() {
 
     // Cerrar el modal y regresar al panel del listado.
     function cerrarFormulario() {
+modoCreacionMovil = false;
+tipoGeometriaMovil = "";
 
+if (panelDibujoMovil) {
+    panelDibujoMovil.hidden = true;
+}
+actualizarSeleccionGeometriaMovil("");
+modal.classList.remove("modal-iniciativa-movil-mapa");
+
+if (modal.parentElement !== panelProyectos) {
+    panelProyectos.appendChild(modal);
+}
         prepararFormularioNuevo();
 
         modal.hidden = true;
@@ -2143,26 +3064,6 @@ function configurarFormularioIniciativa() {
             "Cuando termines, la ubicación quedará asociada al formulario.";
     });
 
-    // Actualizar mensaje al terminar el dibujo.
-    if (mapa) {
-
-        mapa.on(L.Draw.Event.CREATED, function () {
-
-            if (!geometriaIniciativaTemporal) {
-                return;
-            }
-
-            const nombres = {
-                punto: "Punto",
-                linea: "Línea",
-                poligono: "Polígono"
-            };
-
-            estadoGeometria.textContent =
-                nombres[selectorTipo.value] +
-                " dibujado correctamente. Puedes cambiar el tipo para volver a dibujar.";
-        });
-    }
 
     // Enviar iniciativa a Supabase.
     formulario.addEventListener("submit", async function (evento) {
@@ -2364,4 +3265,241 @@ function configurarFormularioIniciativa() {
         }
 
     });
+}
+
+/**
+ * BUSCADOR DE CALLES Y SECTORES CON PHOTON
+ * Busca lugares cercanos a Olmué usando OpenStreetMap.
+ */
+
+
+function configurarBuscadorDirecciones() {
+    if (!mapa) {
+        console.warn("El mapa aún no está inicializado.");
+        return;
+    }
+
+    const controlBusqueda = L.control({ position: "topright" });
+
+    controlBusqueda.onAdd = function () {
+        const contenedor = L.DomUtil.create(
+            "div",
+            "control-busqueda-photon"
+        );
+
+        contenedor.innerHTML = `
+            <button
+                type="button"
+                class="boton-lupa-photon"
+                aria-label="Buscar calles y sectores"
+                title="Buscar calles y sectores"
+                aria-expanded="false"
+            >⌕</button>
+
+            <div class="panel-busqueda-photon" hidden>
+                <input
+                    type="search"
+                    class="input-busqueda-photon"
+                    placeholder="Buscar calle o sector..."
+                    autocomplete="off"
+                    aria-label="Buscar calle o sector"
+                >
+                <div class="resultados-busqueda-photon" hidden></div>
+                <p class="estado-busqueda-photon" role="status"></p>
+            </div>
+        `;
+
+        L.DomEvent.disableClickPropagation(contenedor);
+        L.DomEvent.disableScrollPropagation(contenedor);
+
+        const boton = contenedor.querySelector(".boton-lupa-photon");
+        const panel = contenedor.querySelector(".panel-busqueda-photon");
+        const input = contenedor.querySelector(".input-busqueda-photon");
+        const resultados = contenedor.querySelector(
+            ".resultados-busqueda-photon"
+        );
+        const estado = contenedor.querySelector(".estado-busqueda-photon");
+
+        let temporizador = null;
+        let controlador = null;
+        let marcador = null;
+
+        
+boton.addEventListener("click", function () {
+    panel.hidden = !panel.hidden;
+    boton.setAttribute("aria-expanded", String(!panel.hidden));
+
+    if (!panel.hidden) {
+        input.focus();
+    } else {
+        resultados.hidden = true;
+
+        if (marcador) {
+            mapa.removeLayer(marcador);
+            marcador = null;
+        }
+
+        input.value = "";
+        mostrarEstado("");
+    }
+});
+
+
+        function mostrarEstado(mensaje) {
+            estado.textContent = mensaje;
+        }
+
+        function limpiarResultados() {
+            resultados.replaceChildren();
+            resultados.hidden = true;
+        }
+
+        function etiquetaLugar(p) {
+            const partes = [
+                p.name,
+                p.street,
+                p.housenumber,
+                p.district,
+                p.city,
+                p.state
+            ].filter(Boolean);
+
+            return [...new Set(partes)].join(", ") || "Lugar sin nombre";
+        }
+
+        input.addEventListener("input", function () {
+            clearTimeout(temporizador);
+
+            if (controlador) {
+                controlador.abort();
+            }
+
+            limpiarResultados();
+
+            const consulta = input.value.trim();
+
+            if (consulta.length < 3) {
+                mostrarEstado("Escribe al menos 3 caracteres.");
+                return;
+            }
+
+            mostrarEstado("Buscando…");
+
+            temporizador = setTimeout(async function () {
+                controlador = new AbortController();
+
+                const parametros = new URLSearchParams({
+                    q: consulta,
+                    lat: "-33.005",
+                    lon: "-71.184",
+                    limit: "6"
+                });
+
+                try {
+                    const respuesta = await fetch(
+                        `https://photon.komoot.io/api/?${parametros}`,
+                        { signal: controlador.signal }
+                    );
+
+                    if (!respuesta.ok) {
+                        throw new Error(`HTTP ${respuesta.status}`);
+                    }
+
+                    const datos = await respuesta.json();
+
+                    if (input.value.trim() !== consulta) return;
+
+                    const lugares = datos.features || [];
+
+                    if (!lugares.length) {
+                        mostrarEstado("No se encontraron resultados.");
+                        return;
+                    }
+
+                    lugares.forEach(function (lugar) {
+                        const coordenadas = lugar.geometry?.coordinates;
+                        if (!coordenadas || coordenadas.length < 2) return;
+
+                        const lng = Number(coordenadas[0]);
+                        const lat = Number(coordenadas[1]);
+
+                        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                            return;
+                        }
+
+                        const etiqueta = etiquetaLugar(lugar.properties || {});
+                        const opcion = document.createElement("button");
+
+                        opcion.type = "button";
+                        opcion.className = "opcion-busqueda-photon";
+                        opcion.textContent = etiqueta;
+
+                        opcion.addEventListener("click", function () {
+                            mapa.setView([lat, lng], 17, { animate: true });
+
+                            if (marcador) {
+                                mapa.removeLayer(marcador);
+                            }
+
+                            marcador = L.marker([lat, lng])
+                                .addTo(mapa)
+                                .bindPopup(etiqueta)
+                                .openPopup();
+
+                            input.value = etiqueta;
+                            limpiarResultados();
+                            mostrarEstado("Ubicación seleccionada.");
+                        });
+
+                        resultados.appendChild(opcion);
+                    });
+
+                    resultados.hidden = resultados.children.length === 0;
+                    mostrarEstado(
+                        resultados.hidden
+                            ? "No se encontraron ubicaciones válidas."
+                            : "Selecciona una ubicación."
+                    );
+                } catch (error) {
+                    if (error.name === "AbortError") return;
+
+                    console.error("Error en búsqueda Photon:", error);
+                    mostrarEstado("Error al buscar. Inténtalo nuevamente.");
+                }
+            }, 350);
+        });
+
+        input.addEventListener("keydown", function (evento) {
+            if (evento.key === "Escape") {
+                limpiarResultados();
+                panel.hidden = true;
+                boton.setAttribute("aria-expanded", "false");
+                boton.focus();
+            }
+
+            if (evento.key === "Enter") {
+                const primeraOpcion = resultados.querySelector(
+                    ".opcion-busqueda-photon"
+                );
+
+                if (primeraOpcion) {
+                    evento.preventDefault();
+                    primeraOpcion.click();
+                }
+            }
+        });
+
+        
+mapa.on("click", function () {
+    if (marcador) {
+        mapa.removeLayer(marcador);
+        marcador = null;
+    }
+});
+
+
+        return contenedor;
+    };
+
+    controlBusqueda.addTo(mapa);
 }
