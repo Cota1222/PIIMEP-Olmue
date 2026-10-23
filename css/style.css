@@ -2036,246 +2036,272 @@ CONTROLES LEAFLET DERECHA
 RESPONSIVE
 ====================================================== */
 
-@media(max-width:768px){
 
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
 
-    /* ======================================
-    HERO
-    ====================================== */
+@media (max-width: 768px) {
 
-    .hero{
+    /* HERO */
 
-        min-height:430px;
-
-        padding:45px 20px;
-
+    .hero {
+        min-height: auto;
+        padding: 35px 18px;
     }
 
-
-
-    .hero .logo-municipal img{
-
-        width:110px;
-
+    .hero .logo-municipal img {
+        width: 95px;
     }
 
-
-
-    .hero h1{
-
-        font-size:34px;
-
+    .hero h1 {
+        font-size: 30px;
+        line-height: 1.2;
     }
 
-
-
-    .hero-subtitulo{
-
-        font-size:17px;
-
+    .hero-subtitulo {
+        font-size: 16px;
+        line-height: 1.5;
     }
 
-
-
-    /* ======================================
-    CONTENIDO
-    ====================================== */
-
-    .contenido-informativo{
-
-        padding:
-
-            35px
-
-            15px
-
-            100px;
-
+    .titulo-con-logo {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
     }
 
-
-
-    .bloque-informativo{
-
-        padding:28px 22px;
-
-        border-radius:16px;
-
+    .logo-piimep-inicio {
+        width: 125px;
     }
 
+    /* CONTENIDO INFORMATIVO */
 
-
-    .bloque-informativo h2{
-
-        font-size:24px;
-
+    .contenido-informativo {
+        padding: 25px 12px 90px;
     }
 
-
-
-    .bloque-informativo p{
-
-        font-size:16px;
-
-        line-height:1.7;
-
+    .bloque-informativo {
+        padding: 24px 18px;
+        margin-bottom: 20px;
+        border-radius: 14px;
     }
 
-
-
-    /* ======================================
-    TARJETAS
-    ====================================== */
-
-    .tarjetas-iniciativas{
-
-        grid-template-columns:1fr;
-
-        gap:18px;
-
+    .bloque-informativo h2 {
+        font-size: 22px;
+        line-height: 1.35;
     }
 
-
-
-    .tarjeta-iniciativa{
-
-        padding:25px;
-
+    .bloque-informativo p {
+        font-size: 15px;
+        line-height: 1.65;
     }
 
-
-
-    /* ======================================
-    PARTICIPACIÓN
-    ====================================== */
-
-    .seccion-participar{
-
-        min-height:550px;
-
-        padding:40px 15px;
-
-        border-radius:18px;
-
+    .tarjetas-iniciativas {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 24px;
     }
 
-
-
-    .tarjeta-ingreso{
-
-        padding:30px 22px;
-
+    .tarjeta-iniciativa {
+        padding: 20px;
     }
 
+    /* ACCESO A PARTICIPACIÓN */
 
-
-    .tarjeta-ingreso h2{
-
-        font-size:24px;
-
+    .seccion-participar {
+        min-height: auto;
+        padding: 28px 12px;
+        border-radius: 14px;
     }
 
-
-
-    /* ======================================
-    BOTÓN FLOTANTE
-    ====================================== */
-
-    #boton-ingresar{
-
-        width:
-
-            calc(100% - 30px);
-
-        max-width:400px;
-
-        bottom:15px;
-
+    .tarjeta-ingreso {
+        padding: 25px 18px;
     }
 
-
-
-    /* ======================================
-    APLICACIÓN / MAPA
-    ====================================== */
-
-    #header{
-
-        padding:0 15px;
-
-        height:65px;
-
+    .tarjeta-ingreso h2 {
+        font-size: 22px;
     }
 
-
-
-    #header h1{
-
-        font-size:18px;
-
+    #boton-ingresar {
+        width: calc(100% - 24px);
+        max-width: 400px;
+        bottom: max(12px, env(safe-area-inset-bottom));
     }
 
+    /* APLICACIÓN PRINCIPAL */
 
-
-    #contenedor{
-
-        flex-direction:column;
-
+    #aplicacion {
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
     }
 
+    /* ENCABEZADO COMPACTO */
 
-
-    #panel{
-
-        width:100%;
-
-        height:300px;
-
-        border-right:none;
-
-        border-bottom:
-
-            1px solid
-
-            var(--gris-borde);
-
-        padding:15px;
-
-        order:1;
-
+    #header {
+        flex: 0 0 auto;
+        height: auto;
+        min-height: 58px;
+        padding: 6px 10px;
+        gap: 8px;
     }
 
-
-
-    #mapa{
-
-        min-height:calc(
-
-            100vh - 365px
-
-        );
-
-        order:2;
-
+    .titulo-header {
+        min-width: 0;
+        flex: 1 1 auto;
+        gap: 7px;
     }
 
-
-
-    #detalle-proyecto{
-
-        top:10px;
-
-        left:10px;
-
-        right:10px;
-
-        width:auto;
-
-        max-width:none;
-
+    .logo-piimep-app {
+        width: 40px !important;
+        height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
     }
 
+    .texto-header {
+        min-width: 0;
+    }
+
+    .texto-header h1 {
+        font-size: 12px;
+        line-height: 1.25;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .acciones-header {
+        flex: 0 0 auto;
+        margin-left: 0;
+        gap: 2px;
+    }
+
+    #usuario-activo {
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 10px;
+    }
+
+    #boton-volver-inicio {
+        padding: 7px 8px;
+        border-radius: 7px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    /* MAPA Y CONTROLES */
+
+    #contenedor {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #panel {
+        order: 0;
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        padding: 8px 10px;
+        border-right: none;
+        border-bottom: 1px solid var(--gris-borde);
+        overflow: visible;
+        text-align: left;
+    }
+
+    /* Por ahora se oculta el ranking visualmente en móvil.
+       El selector de proyectos se mantiene disponible. */
+
+    .tarjeta-destacada {
+        display: none;
+    }
+
+    #proyectos h2 {
+        display: none;
+    }
+
+    #selector-proyectos {
+        display: block;
+        width: 100%;
+        margin-top: 0;
+        padding: 10px 12px;
+        min-height: 42px;
+        font-size: 14px;
+        border-radius: 9px;
+    }
+
+    #mapa {
+        order: 1;
+        flex: 1 1 auto;
+        width: 100%;
+        min-height: 0;
+        position: relative;
+    }
+
+    /* DETALLE DEL PROYECTO */
+
+    #detalle-proyecto {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-width: none;
+        max-height: calc(100% - 16px);
+        overflow-y: auto;
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    #detalle-proyecto h2 {
+        font-size: 18px;
+    }
+
+    /* MODALES */
+
+    .contenido-voto {
+        width: calc(100vw - 24px);
+        max-width: 400px;
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+        padding: 22px 18px;
+    }
+
+    .contenido-mensaje {
+        width: calc(100vw - 24px);
+        max-width: 360px;
+        padding: 24px 18px;
+    }
+
+    /* LEYENDA */
+
+    #leyenda-proyectos {
+        right: 8px;
+        bottom: 12px;
+    }
+
+    #boton-leyenda {
+        min-height: 38px;
+        padding: 9px 11px;
+    }
+
+    /* CONTROLES LEAFLET */
+
+    .leaflet-top.leaflet-right {
+        top: 8px;
+        right: 8px;
+    }
+
+    .leaflet-control-layers,
+    .leaflet-control-zoom {
+        margin-top: 4px !important;
+    }
 }
+
 .logo-piimep-inicio{
 
     width:170px;
@@ -2735,4 +2761,51 @@ LEYENDA DE PROYECTOS
 #boton-participar-pladeco:hover {
     background: var(--azul-principal);
     color: white;
+}
+
+/* =========================================
+   CORREGIR SUPERPOSICIÓN DE POPUPS EN LEAFLET
+   ========================================= */
+
+/* El contenedor del mapa crea el contexto de apilamiento */
+#mapa {
+    position: relative;
+    isolation: isolate;
+}
+
+/* Los controles quedan en un nivel inferior */
+#mapa .leaflet-top,
+#mapa .leaflet-bottom {
+    z-index: 500 !important;
+}
+
+/* El panel completo de popups queda por encima */
+#mapa .leaflet-popup-pane {
+    z-index: 1000 !important;
+    pointer-events: none;
+}
+
+/* El popup recibe los clics normalmente */
+#mapa .leaflet-popup {
+    z-index: 1001 !important;
+    pointer-events: auto;
+}
+
+/* La equis para cerrar el popup */
+#mapa .leaflet-popup-close-button {
+    z-index: 1002 !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: 5px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 25px !important;
+    line-height: 1 !important;
+    color: #222 !important;
+    background: #fff !important;
+    border-radius: 50%;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
