@@ -2080,3 +2080,53 @@ button:focus-visible {
         width: min(260px, calc(100vw - 100px));
     }
 }
+
+/* =========================================
+   MÓVILES EN ORIENTACIÓN HORIZONTAL
+   ========================================= */
+
+@media (max-width: 900px) and (orientation: landscape) {
+
+    .panel-mapa {
+        height: 100%;
+        min-height: 0;
+    }
+
+    .barra-mapa {
+        min-height: 48px;
+        padding: 6px 12px;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .barra-mapa h2 {
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+
+    .barra-mapa p {
+        display: none;
+    }
+
+    #btn-vista-inicial {
+        padding: 6px 9px;
+        font-size: 0.75rem;
+    }
+
+    #mapa {
+        height: 0;
+        min-height: 0;
+        flex: 1 1 0;
+        width: 100%;
+    }
+
+    .leyenda {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        gap: 6px 12px;
+    }
+
+    .leyenda-item {
+        font-size: 0.7rem;
+    }
+}
