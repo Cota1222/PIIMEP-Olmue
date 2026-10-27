@@ -1,0 +1,142 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 160">
+  <title>PLADECO: territorio, naturaleza y participación ciudadana</title>
+
+  
+  <!-- Montaña pequeña con curvas suaves -->
+  <g stroke="#25845A" stroke-width="2.5"
+     stroke-linejoin="round" stroke-linecap="round">
+    <path
+      d="M9 39
+         C13 34 18 26 23 21
+         C25 19 27 23 30 28
+         C33 24 37 17 40 14
+         C42 12 44 17 47 22
+         C50 27 54 32 56 35
+         C43 36 25 39 9 39 Z"
+      fill="#DCECE2"
+    />
+
+    <!-- Nieve de la cumbre, también redondeada -->
+    <path
+      d="M34 22
+         C36 19 38 15 40 14
+         C42 15 45 21 47 25
+         C44 24 42 23 40 24
+         C38 24 36 26 35 27
+         C36 25 35 23 34 22 Z"
+      fill="#FFFFFF"
+      stroke="none"
+    />
+  </g>
+
+  <!-- Hoja pequeña -->
+  <g>
+    <path
+      d="M151 16
+         C160 7 174 10 179 12
+         C178 25 169 35 159 33
+         C152 31 148 24 151 16 Z"
+      fill="#48A878"
+    />
+    <!-- Nervadura -->
+    <path
+      d="M154 29 Q164 20 175 13"
+      fill="none"
+      stroke="#25845A"
+      stroke-width="1.8"
+      stroke-linecap="round"
+    />
+  </g>
+
+  <!-- Mapa territorial original -->
+  <g stroke="#25845A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M25 47 L66 28 L94 40 L119 27 L158 42
+         L158 91 L121 78 L94 94 L65 81 L25 99 Z"
+      fill="#E5F3E9"
+    />
+
+  <!-- Gota de agua pequeña -->
+  <g>
+    <path
+      d="M133 20
+         C130 25 125 31 125 35
+         C125 41 129 45 134 45
+         C139 45 143 41 143 35
+         C143 31 137 24 133 20 Z"
+      fill="#5799D0"
+    />
+    <!-- Brillo de la gota -->
+    <path
+      d="M130 34
+         C130 31 132 28 134 26"
+      fill="none"
+      stroke="#FFFFFF"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+  </g>
+
+    <!-- División de sectores -->
+    <path
+      d="M66 28 L65 81 M94 40 L94 94 M119 27 L121 78"
+      fill="none"
+    />
+  </g>
+
+  <!-- Pin de ubicación original -->
+  <path
+    d="M100 7
+       C86 7 77 17 77 30
+       C77 47 100 68 100 68
+       C100 68 123 47 123 30
+       C123 17 114 7 100 7 Z"
+    fill="#6541B8"
+  />
+  <circle cx="100" cy="29" r="8" fill="#FFFFFF"/>
+
+  <!-- Grupo de personas original -->
+  <g>
+    <!-- Persona izquierda -->
+    <circle cx="65" cy="101" r="11" fill="#48A878"/>
+    <path
+      d="M45 136 V128
+         C45 116 53 110 65 110
+         C74 110 80 114 83 121
+         V136 Z"
+      fill="#48A878"
+    />
+
+    <!-- Persona derecha -->
+    <circle cx="135" cy="101" r="11" fill="#8B79D6"/>
+    <path
+      d="M117 136 V128
+         C117 116 124 110 135 110
+         C147 110 155 116 155 128
+         V136 Z"
+      fill="#8B79D6"
+    />
+
+    <!-- Persona central -->
+    <circle cx="100" cy="91" r="13" fill="#6541B8"/>
+    <path
+      d="M77 136 V126
+         C77 113 86 105 100 105
+         C114 105 123 113 123 126
+         V136 Z"
+      fill="#6541B8"
+    />
+  </g>
+
+  <!-- Base de integración territorial original -->
+  <path
+    d="M38 145 Q100 153 162 145"
+    fill="none"
+    stroke="#25845A"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+</svg>
+

@@ -2809,3 +2809,371 @@ LEYENDA DE PROYECTOS
     border-radius: 50%;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
+
+@media (max-height: 500px) {
+    #detalle-proyecto {
+        padding: 8px !important;
+        transform: scale(0.75);
+        transform-origin: top left;
+    }
+
+    #detalle-proyecto .cerrar-detalle {
+        top: 4px;
+        right: 4px;
+        font-size: 14px;
+    }
+
+    #detalle-proyecto .detalle-codigo {
+        margin-bottom: 2px;
+        font-size: 0.7rem;
+    }
+
+    #detalle-proyecto h2 {
+        margin-top: 2px;
+        margin-bottom: 4px;
+        font-size: 1rem;
+        line-height: 1.1;
+    }
+
+    #detalle-proyecto .detalle-categoria {
+        margin-bottom: 5px;
+        font-size: 0.75rem;
+    }
+
+    #detalle-proyecto .detalle-datos {
+        gap: 4px;
+        margin-bottom: 5px;
+    }
+
+    #detalle-proyecto .detalle-dato {
+        margin-bottom: 2px;
+        font-size: 0.7rem;
+    }
+
+    #detalle-proyecto .detalle-label {
+        font-size: 0.65rem;
+    }
+
+    #detalle-proyecto .detalle-descripcion {
+        margin-top: 3px;
+        margin-bottom: 5px;
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+
+    #detalle-proyecto .detalle-descripcion p {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #detalle-proyecto .detalle-votos {
+        margin-top: 3px;
+        margin-bottom: 5px;
+        font-size: 0.75rem;
+    }
+
+    #detalle-proyecto .boton-votar {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        line-height: 1.1;
+    }
+}
+/* MODO HORIZONTAL: eliminar barras de desplazamiento */
+@media (max-height: 500px) and (orientation: landscape) {
+    #detalle-proyecto {
+        max-height: none !important;
+        overflow: visible !important;
+        overflow-y: visible !important;
+        overflow-x: visible !important;
+        transform: scale(0.65);
+        transform-origin: top left;
+    }
+
+    #detalle-proyecto * {
+        scrollbar-width: none !important;
+    }
+
+    #detalle-proyecto *::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+}
+
+/* =========================================
+   MODAL DE VOTACIÓN — MÓVIL HORIZONTAL
+========================================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    #modal-voto {
+        max-height: 100%;
+    }
+
+    #modal-voto .contenido-voto {
+        box-sizing: border-box;
+        width: 320px;
+        max-width: calc(100vw - 24px);
+
+        padding: 12px 16px;
+        border-radius: 12px;
+
+        transform: scale(0.85);
+        transform-origin: center center;
+    }
+
+    #modal-voto .votacion-acento {
+        height: 4px;
+    }
+
+    #modal-voto .contenido-voto h2 {
+        font-size: 17px;
+        line-height: 1.15;
+        margin: 3px 0 4px;
+    }
+
+    #modal-voto .votacion-codigo {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+
+    #modal-voto .contenido-voto h3 {
+        font-size: 13px;
+        line-height: 1.2;
+        margin-bottom: 8px;
+    }
+
+    #modal-voto .campo-rut {
+        gap: 4px;
+        margin: 7px 0;
+    }
+
+    #modal-voto .campo-rut label {
+        font-size: 11px;
+    }
+
+    #modal-voto .contenido-voto input {
+        box-sizing: border-box;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    #modal-voto .botones-voto {
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    #modal-voto .contenido-voto button {
+        padding: 8px;
+        margin-top: 0;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+}
+
+/* =========================================
+   TEXTO CENTRADO — PANTALLA INFORMATIVA
+========================================= */
+
+#pantalla-informativa .hero-contenido {
+    text-align: center;
+}
+
+#pantalla-informativa .hero-subtitulo {
+    text-align: center;
+}
+
+#pantalla-informativa .bloque-informativo {
+    text-align: center;
+}
+
+#pantalla-informativa .tarjeta-iniciativa {
+    text-align: center;
+}
+
+#pantalla-informativa .mensaje-final {
+    text-align: center;
+}
+
+#pantalla-informativa .tarjeta-ingreso {
+    text-align: center;
+}
+
+#pantalla-informativa .tarjeta-ingreso .subtitulo {
+    text-align: center;
+}
+/* =========================================
+   AJUSTES DE ANCHO Y ALINEACIÓN
+   PANTALLA INFORMATIVA
+========================================= */
+
+/* Contenido principal más compacto */
+#pantalla-informativa .hero-contenido,
+#pantalla-informativa .contenido-informativo {
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Título en una sola línea en pantallas grandes */
+#pantalla-informativa .titulo-con-logo h1 {
+    white-space: nowrap;
+    font-size: clamp(1.5rem, 2.5vw, 2.4rem);
+    text-align: center;
+}
+
+/* Mantener el título y el logo bien alineados */
+#pantalla-informativa .titulo-con-logo {
+    justify-content: center;
+    gap: 16px;
+}
+
+/* Texto introductorio más estrecho */
+#pantalla-informativa .hero-subtitulo {
+    max-width: 850px;
+    margin: 16px auto 28px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Bloques informativos con ancho controlado */
+#pantalla-informativa .bloque-informativo {
+    max-width: 950px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Párrafos más cómodos de leer */
+#pantalla-informativa .bloque-informativo p {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+}
+
+/* Tarjetas de participación */
+#pantalla-informativa .tarjetas-iniciativas {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 768px) {
+    #pantalla-informativa .titulo-con-logo h1 {
+        white-space: normal;
+        font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    #pantalla-informativa .titulo-con-logo {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    #pantalla-informativa .hero-subtitulo,
+    #pantalla-informativa .bloque-informativo p {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+/* =========================================
+   ENCABEZADO: TÍTULO ARRIBA Y LOGOS ABAJO
+========================================= */
+
+#pantalla-informativa .titulo-con-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 25px;
+    box-sizing: border-box;
+}
+
+/* Título */
+#pantalla-informativa .titulo-con-logo h1 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    font-size: clamp(1.5rem, 2.5vw, 2.3rem);
+}
+
+/* Ambos logos debajo del título */
+#pantalla-informativa .logos-planificacion {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Tamaño de los logos */
+#pantalla-informativa .logo-piimep-inicio,
+#pantalla-informativa .logo-pladeco-inicio {
+    display: block;
+    width: 160px;
+    height: 150px;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 768px) {
+    #pantalla-informativa .titulo-con-logo {
+        padding: 0 16px;
+        gap: 14px;
+    }
+
+    #pantalla-informativa .titulo-con-logo h1 {
+        white-space: normal;
+        font-size: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    #pantalla-informativa .logos-planificacion {
+        gap: 20px;
+    }
+
+    #pantalla-informativa .logo-piimep-inicio,
+    #pantalla-informativa .logo-pladeco-inicio {
+        width: 120px;
+        height: 95px;
+    }
+}
+/* Iconografía de las tarjetas de participación */
+#pantalla-informativa .icono-iniciativa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    height: 145px;
+}
+
+#pantalla-informativa .icono-iniciativa img {
+    display: block;
+    width: 145px;
+    height: 145px;
+    object-fit: contain;
+}
+
+#pantalla-informativa .icono-piimep {
+    color: #6541B8;
+}
+
+#pantalla-informativa .icono-pladeco {
+    color: #25845A;
+}
+
+@media (max-width: 768px) {
+    #pantalla-informativa .icono-iniciativa,
+    #pantalla-informativa .icono-iniciativa img {
+        height: 110px;
+        width: 110px;
+    }
+}

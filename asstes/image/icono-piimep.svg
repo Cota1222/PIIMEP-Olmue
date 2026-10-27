@@ -1,0 +1,101 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <title>Movilidad y espacios públicos</title>
+
+  <!-- Vereda -->
+  <path
+    d="M12 125 L91 83 L148 83 L68 132 Z"
+    fill="#DCD2F5"
+  />
+
+  <!-- Ciclovía -->
+  <path
+    d="M68 132 L148 83 L148 125 Q148 132 140 132 Z"
+    fill="#6541B8"
+  />
+
+  
+  <!-- JUNTAS DE LA VEREDA: PAVIMENTO EN PERSPECTIVA -->
+  <g
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.9"
+  >
+    <!-- Juntas longitudinales, paralelas al borde superior -->
+    <path d="M25 118 L91 83"/>
+    <path d="M49 127 L112 91"/>
+
+    <!-- Juntas transversales, siguiendo la profundidad -->
+    <path d="M43 108 L54 115"/>
+    <path d="M68 95 L79 102"/>
+    <path d="M94 83 L105 90"/>
+  </g>
+
+
+  <!-- Árbol principal -->
+  <g stroke="#25845A" stroke-width="5" stroke-linecap="round">
+    <path d="M39 92 V42" fill="none"/>
+    <path
+      d="M39 17
+         C25 17 19 29 23 39
+         C11 47 17 63 29 64
+         C34 72 48 72 53 62
+         C66 58 64 43 55 38
+         C58 26 49 17 39 17 Z"
+      fill="#48A878"
+      stroke="none"
+    />
+    <path d="M39 43 L29 33 M39 53 L49 41" fill="none"/>
+  </g>
+
+  <!-- Árbol secundario -->
+  <g>
+    <path d="M91 76 V48" stroke="#25845A" stroke-width="4"/>
+    <circle cx="91" cy="38" r="13" fill="#48A878"/>
+    <circle cx="81" cy="45" r="10" fill="#48A878"/>
+    <circle cx="101" cy="46" r="10" fill="#48A878"/>
+  </g>
+
+  <!-- Banca pública -->
+  <g
+    fill="none"
+    stroke="#6541B8"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M54 76 L77 68 M54 83 L77 75"/>
+    <path d="M57 85 L57 96 M74 79 L74 89"/>
+    <path d="M52 72 L52 81 M78 65 L78 75"/>
+  </g>
+
+  <!-- Luminaria -->
+  <path
+    d="M119 75 V29 Q119 22 126 22 H132"
+    fill="none"
+    stroke="#6541B8"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+  <path
+    d="M128 22 H137 L134 28 H125 Z"
+    fill="#6541B8"
+  />
+
+  <!-- Bicicleta -->
+  <g
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="2.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="103" cy="112" r="8"/>
+    <circle cx="135" cy="112" r="8"/>
+    <path d="M103 112 L113 99 L123 112 H103 L117 112 L128 99 L135 112"/>
+    <path d="M111 99 H119 M125 96 H130"/>
+  </g>
+</svg>
