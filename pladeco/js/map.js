@@ -2483,94 +2483,43 @@ function COLOR_PRINCIPAL_OSCURO() {
 }
 
 
+
 /**
  * Activa el dibujo de una iniciativa vecinal.
- *
- * tipo puede ser:
- * - "punto"
- * - "linea"
- * - "poligono"
+ * La plataforma solo permite marcar puntos.
  */
-
 function activarDibujoIniciativa(tipo) {
-  cancelarDibujoIniciativa();
+    cancelarDibujoIniciativa();
 
-  const verde = "#2E7D32";
-
-  if (tipo === "punto") {
-    herramientaDibujoActiva = new L.Draw.Marker(mapa, {
-      icon: L.divIcon({
-        className: "iniciativa-punto-verde",
-        html: `
-          <div style="
-            width: 14px;
-            height: 14px;
-            background: ${verde};
-            border: 2px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 0 1px ${verde};
-          "></div>
-        `,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
-      })
-    });
-
-  } else if (tipo === "linea") {
-    herramientaDibujoActiva = new L.Draw.Polyline(mapa, {
-        shapeOptions: {
-            color: verde,
-            weight: 4,
-            opacity: 0.9
-        }
-    });
-
-    // En móviles, finalizar la línea con doble clic,
-    // igual que el mecanismo utilizado por los polígonos.
-    if (modoCreacionMovil) {
-        herramientaDibujoActiva._updateFinishHandler = function () {
-            const cantidad = this._markers.length;
-
-            if (cantidad > 1) {
-                this._markers[cantidad - 1].on(
-                    "dblclick",
-                    this._finishShape,
-                    this
-                );
-
-                if (cantidad > 2) {
-                    this._markers[cantidad - 2].off(
-                        "dblclick",
-                        this._finishShape,
-                        this
-                    );
-                }
-            }
-        };
+    if (tipo !== "punto") {
+        console.warn(
+            "Tipo de geometría no permitido. Solo se admiten puntos."
+        );
+        return;
     }
-  
 
-  } else if (tipo === "poligono") {
-    herramientaDibujoActiva = new L.Draw.Polygon(mapa, {
-      allowIntersection: false,
-      showArea: true,
-      shapeOptions: {
-        color: verde,
-        weight: 3,
-        opacity: 0.9,
-        fillColor: verde,
-        fillOpacity: 0.25
-      }
+    const verde = "#2E7D32";
+
+    herramientaDibujoActiva = new L.Draw.Marker(mapa, {
+        icon: L.divIcon({
+            className: "iniciativa-punto-verde",
+            html: `
+                <div style="
+                    width: 14px;
+                    height: 14px;
+                    background: ${verde};
+                    border: 2px solid white;
+                    border-radius: 50%;
+                    box-shadow: 0 0 0 1px ${verde};
+                "></div>
+            `,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        })
     });
-  }
-
-  if (herramientaDibujoActiva) {
+mapa.getContainer().classList.add("cursor-iniciativa-punto");
     herramientaDibujoActiva.enable();
-  }
 }
-
-
-
 /**
  * Cancela el dibujo y elimina la geometría temporal.
  */
@@ -2596,79 +2545,6 @@ function cancelarDibujoIniciativa() {
     console.log("Dibujo temporal limpiado.");
 }
 
-
-/**
- * Abre el formulario móvil después de validar la geometría.
- * Conserva la ubicación dibujada y superpone el formulario al mapa.
- */
-function abrirFormularioDesdeDibujoMovil(tipo) {
-
-    const modal = document.getElementById("modal-iniciativa");
-    const formulario = document.getElementById("formulario-iniciativa");
-    const selectorTipo = document.getElementById("iniciativa-tipo");
-    const panelDibujo = document.getElementById("panel-dibujo-movil");
-    const mensaje = document.getElementById("mensaje-formulario-iniciativa");
-    const confirmacion = document.getElementById("confirmacion-iniciativa");
-    const panelMapa = document.querySelector(".panel-mapa");
-
-    if (
-        !modal ||
-        !formulario ||
-        !selectorTipo ||
-        !panelDibujo ||
-        !panelMapa ||
-        !geometriaIniciativaTemporal
-    ) {
-        console.error(
-            "No se puede abrir el formulario: faltan elementos o una geometría válida."
-        );
-        return;
-    }
-
-    // Preparar los campos sin borrar la geometría validada.
-    formulario.reset();
-    selectorTipo.value = tipo;
-
-    formulario.hidden = false;
-
-    if (confirmacion) {
-        confirmacion.hidden = true;
-    }
-
-    if (mensaje) {
-        mensaje.textContent = "";
-    }
-
-    const estadoGeometria = document.getElementById(
-        "estado-geometria-iniciativa"
-    );
-
-    if (estadoGeometria) {
-        estadoGeometria.textContent =
-            "Ubicación validada dentro de Olmué. Puedes completar los datos de tu iniciativa.";
-    }
-
-    // Ocultar el selector y mostrar el formulario.
-    panelDibujo.hidden = true;
-
-    // Mover el modal dentro del área del mapa para poder superponerlo.
-    panelMapa.appendChild(modal);
-
-    modal.classList.add("modal-iniciativa-movil-mapa");
-    modal.hidden = false;
-
-    const panelProyectos = document.querySelector(".panel-proyectos");
-
-    if (panelProyectos) {
-        panelProyectos.classList.add("creando-iniciativa");
-    }
-
-    if (mapa) {
-        setTimeout(function () {
-            mapa.invalidateSize();
-        }, 100);
-    }
-}
 
 function abrirFormularioDesdeDibujoMovil(tipo) {
 
@@ -2892,7 +2768,13 @@ if (botonTerminarDibujoMovil) {
             }, 100);
         }
     }
-
+// Conectar el botón Cancelar con el cierre del panel.
+    if (botonCancelarDibujoMovil) {
+        botonCancelarDibujoMovil.addEventListener(
+            "click",
+            cancelarFlujoMovil
+        );
+    }
     // Abrir la barra inferior.
     if (botonAbrirMovil && panelDibujoMovil) {
         botonAbrirMovil.addEventListener("click", function () {
@@ -2925,47 +2807,36 @@ if (botonTerminarDibujoMovil) {
         });
     }
 
-    // Seleccionar punto, línea o polígono.
+    // Seleccionar únicamente puntos en el mapa móvil.
     opcionesGeometriaMovil.forEach(function (boton) {
+
         boton.addEventListener("click", function () {
+
             const tipo = boton.dataset.geometria;
 
-            if (!["punto", "linea", "poligono"].includes(tipo)) {
-                return;
-            }
+            if (tipo !== "punto") return;
 
             cancelarDibujoIniciativa();
 
             modoCreacionMovil = true;
-            tipoGeometriaMovil = tipo;
+            tipoGeometriaMovil = "punto";
 
-            actualizarSeleccionGeometriaMovil(tipo);
+            actualizarSeleccionGeometriaMovil("punto");
 
-if (botonTerminarDibujoMovil) {
-    botonTerminarDibujoMovil.hidden = tipo !== "linea";
-}
+            if (botonTerminarDibujoMovil) {
+                botonTerminarDibujoMovil.hidden = true;
+            }
 
-activarDibujoIniciativa(tipo);
-            activarDibujoIniciativa(tipo);
+            activarDibujoIniciativa("punto");
 
             if (estadoDibujoMovil) {
-                const instrucciones = {
-                    punto: "Toca el lugar del mapa donde irá la iniciativa.",
-                    linea: "Marca los puntos del recorrido y termina el dibujo.",
-                    poligono: "Marca los vértices del área y termina el dibujo."
-                };
-
-                estadoDibujoMovil.textContent = instrucciones[tipo];
+                estadoDibujoMovil.textContent =
+                    "Toca el lugar del mapa donde irá la iniciativa.";
             }
-        });
-    });
 
-    if (botonCancelarDibujoMovil) {
-        botonCancelarDibujoMovil.addEventListener(
-            "click",
-            cancelarFlujoMovil
-        );
-    }
+        });
+
+    });
 
     // Asegurar que el botón de escritorio use el modal en su panel original.
     modoCreacionMovil = false;
@@ -3047,25 +2918,23 @@ if (modal.parentElement !== panelProyectos) {
         }
     });
 
-    // Activar herramienta de dibujo según el tipo seleccionado.
-    selectorTipo.addEventListener("change", function () {
+    // Activar únicamente el dibujo de puntos en escritorio.
+selectorTipo.addEventListener("change", function () {
 
-        const tipo = selectorTipo.value;
+    cancelarDibujoIniciativa();
 
-        cancelarDibujoIniciativa();
-
-        if (!tipo) {
-            estadoGeometria.textContent =
-                "Selecciona un tipo de geometría para comenzar.";
-            return;
-        }
-
-        activarDibujoIniciativa(tipo);
-
+    if (selectorTipo.value !== "punto") {
+        selectorTipo.value = "";
         estadoGeometria.textContent =
-            "Dibuja la geometría en el mapa. " +
-            "Cuando termines, la ubicación quedará asociada al formulario.";
-    });
+            "Solo está disponible el registro de puntos.";
+        return;
+    }
+
+    activarDibujoIniciativa("punto");
+
+    estadoGeometria.textContent =
+        "Haz clic en el mapa para marcar la ubicación de la iniciativa.";
+});
 
 
     // Enviar iniciativa a Supabase.

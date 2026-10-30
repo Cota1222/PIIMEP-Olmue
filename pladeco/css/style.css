@@ -1691,10 +1691,16 @@ button:focus-visible {
     }
 
     .opciones-geometria-movil {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.opcion-geometria-movil {
+    width: 110px;
+    min-height: 66px;
+}
 
     .opcion-geometria-movil {
         display: flex;
@@ -2429,4 +2435,53 @@ button:focus-visible {
     .modal-iniciativa-movil-mapa #formulario-iniciativa textarea {
         min-height: 55px;
     }
+}
+/* Ocultar tipo de geometría en el formulario móvil */
+@media (max-width: 768px) {
+    #modal-iniciativa.modal-iniciativa-movil-mapa
+    #iniciativa-tipo,
+    #modal-iniciativa.modal-iniciativa-movil-mapa
+    label[for="iniciativa-tipo"] {
+        display: none !important;
+    }
+}
+/* Cursor verde al marcar una iniciativa */
+#mapa.cursor-iniciativa-punto,
+#mapa.cursor-iniciativa-punto .leaflet-interactive {
+    cursor: none !important;
+}
+
+#mapa.cursor-iniciativa-punto {
+    cursor: crosshair !important;
+}
+/* Botón cancelar del panel de dibujo móvil */
+#btn-cancelar-dibujo-movil {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px 16px;
+
+    background: #F5F7F5;
+    color: #526156;
+
+    border: 1px solid #D5DED6;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#btn-cancelar-dibujo-movil:hover {
+    background: #E9EFE9;
+    border-color: #B8C9BA;
+}
+
+#btn-cancelar-dibujo-movil:active {
+    background: #DEE8DF;
+    transform: scale(0.98);
 }

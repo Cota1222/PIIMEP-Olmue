@@ -652,8 +652,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!botonPiimep) return;
 
     // Período oficial, según la hora de Chile continental.
-    const APERTURA = "20261102000000";
-    const CIERRE = "20261202000000";
+const APERTURA = "20261102120000";
+const CIERRE = "20261202000000";
 
     function obtenerFechaChile() {
         const partes = new Intl.DateTimeFormat("en-GB", {
@@ -691,7 +691,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tooltip.id = "tooltip-periodo-participacion";
     tooltip.textContent =
-        "La participación estará disponible del 2 de noviembre " +
+        "La participación estará disponible del 2 de noviembre a las 12:00 hrs. " +
         "al 1 de diciembre de 2026.";
 
     Object.assign(tooltip.style, {
