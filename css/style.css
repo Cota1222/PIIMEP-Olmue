@@ -124,35 +124,36 @@ PANTALLA INFORMATIVA
 HERO
 ====================================== */
 
-.hero{
+/* ======================================
+HERO
+====================================== */
 
-    min-height:480px;
+.hero {
 
-    display:flex;
+    min-height: 480px;
 
-    align-items:center;
+    display: flex;
 
-    justify-content:center;
+    align-items: center;
 
-    padding:60px 20px;
+    justify-content: center;
 
-    text-align:center;
+    padding: 60px 20px;
+
+    text-align: center;
 
     background:
+    linear-gradient(
+        rgba(0, 59, 109, 0.78),
+        rgba(0, 59, 109, 0.78)
+    ),
+    url("../asstes/image/FOTOBANNER.jpeg");
 
-        linear-gradient(
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
 
-            135deg,
-
-            var(--azul-oscuro),
-
-            var(--azul-principal)
-
-        );
-
-
-
-    color:white;
+    color: white;
 
 }
 
