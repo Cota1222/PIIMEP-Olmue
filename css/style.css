@@ -1028,18 +1028,12 @@ DETALLE PROYECTO
 }
 
 
-.detalle-label{
-
-    color:#777;
-
-    font-size:12px;
-
-    font-weight:600;
-
-    text-transform:uppercase;
-
-    letter-spacing:.4px;
-
+.detalle-label {
+    color: #777;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: .4px;
 }
 
 

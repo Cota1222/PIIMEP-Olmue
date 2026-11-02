@@ -11,36 +11,113 @@ Controla elementos visuales de la plataforma.
 
 ========================================================
 */
+// ======================================
+// ORDENAR PROYECTOS POR CÓDIGO
+// MO primero, EP después
+// ======================================
+
+function ordenarProyectosPorCodigo(proyectos) {
+
+    const prioridad = {
+        MO: 1,
+        EP: 2
+    };
+
+    return [...proyectos].sort((a, b) => {
+
+        const codigoA = String(a.codigo || "").trim().toUpperCase();
+        const codigoB = String(b.codigo || "").trim().toUpperCase();
+
+        const [prefijoA, numeroA] = codigoA.split("-");
+        const [prefijoB, numeroB] = codigoB.split("-");
+
+        const ordenA = prioridad[prefijoA] || 99;
+        const ordenB = prioridad[prefijoB] || 99;
+
+        if (ordenA !== ordenB) {
+            return ordenA - ordenB;
+        }
+
+        const numeroOrdenA = Number(numeroA) || 0;
+        const numeroOrdenB = Number(numeroB) || 0;
+
+        return numeroOrdenA - numeroOrdenB;
+    });
+}
+// ======================================
+// TOPÓNIMOS DE LA COMUNA DE OLMUÉ
+// ======================================
+
+const TOPONIMOS_OLMUE = [
+    "El Peumo",
+    "Las Palmas",
+    "Quebrada Alvarado",
+    "La Dormida",
+    "Lliu-Lliu",
+    "Pelumpén",
+    "Cajón Grande",
+    "Granizo",
+    "Lo Narváez",
+    "Olmué",
+    "Diego Portales",
+    "Blanco Encalada",
+    "Paula Jaraquemada",
+    "Carrera Pinto",
+    "Parque Teniente Merino"
+];
+
 
 // ======================================
 // FORMATEAR NOMBRE DEL PROYECTO
+// Mayúscula inicial de oración + topónimos
 // ======================================
 
-function formatearNombreProyecto(nombre){
+function formatearNombreProyecto(nombre) {
 
-    if(!nombre){
-
+    if (!nombre) {
         return "Proyecto sin nombre";
-
     }
 
-    return nombre
-        .toLowerCase()
-        .replace(/\b\w/g, letra => letra.toUpperCase());
+    // 1. Normalizar el texto a minúsculas.
+    let texto = nombre
+        .toLocaleLowerCase("es-CL")
+        .trim();
 
-}
+    // 2. Aplicar mayúscula al inicio del texto
+    // y después de punto, interrogación o exclamación.
+    texto = texto.replace(
+        /(^|[.!?]\s+)(\p{L})/gu,
+        (coincidencia, separador, letra) => {
+            return separador + letra.toLocaleUpperCase("es-CL");
+        }
+    );
 
-function cerrarDetalleProyecto(){
+    // 3. Restaurar los nombres geográficos.
+    const toponimosOrdenados = [...TOPONIMOS_OLMUE]
+        .sort((a, b) => b.length - a.length);
 
-    const detalle =
-        document.getElementById("detalle-proyecto");
+    toponimosOrdenados.forEach(toponimo => {
 
-    if(!detalle){
-        return;
-    }
+        const escaparRegex = toponimo.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            "\\$&"
+        );
 
-    detalle.style.display = "none";
+        const expresion = new RegExp(
+            `(^|[^\\p{L}])(${escaparRegex})(?=$|[^\\p{L}])`,
+            "giu"
+        );
 
+        texto = texto.replace(
+            expresion,
+            (coincidencia, separador) => {
+                return separador + toponimo;
+            }
+        );
+
+    });
+
+    return texto;
 }
 
 // ======================================
@@ -253,23 +330,6 @@ if (usuarioActual.rut) {
 
 
         <!-- ==================================
-     DESCRIPCIÓN
-================================== -->
-
-<div class="detalle-descripcion">
-
-    <span class="detalle-label">
-        Descripción
-    </span>
-
-    <p>
-        ${proyecto.descripcion || "Sin descripción disponible."}
-    </p>
-
-</div>
-
-
-        <!-- ==================================
              PARTICIPACIÓN
         ================================== -->
 
@@ -312,6 +372,32 @@ if (usuarioActual.rut) {
 
 }
 
+
+// ======================================
+// CERRAR DETALLE DEL PROYECTO
+// ======================================
+
+function cerrarDetalleProyecto(){
+
+    const detalle = document.getElementById(
+        "detalle-proyecto"
+    );
+
+    if(!detalle){
+        return;
+    }
+
+    // Ocultar panel de información
+    detalle.classList.add("oculto");
+
+    detalle.style.display = "none";
+
+    // Restaurar simbología del proyecto seleccionado
+    if(typeof restaurarProyectoAnterior === "function"){
+        restaurarProyectoAnterior();
+    }
+
+}
 
 
 // ======================================

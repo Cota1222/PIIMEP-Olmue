@@ -22,49 +22,38 @@ let proyectosUsuario = [];
 // FORMATEAR NOMBRE DEL PROYECTO
 // ======================================
 
-function formatearNombreProyecto(nombre){
+function formatearNombreProyecto(nombre) {
 
-    if(!nombre){
-
+    if (!nombre) {
         return "Proyecto sin nombre";
-
     }
 
     const palabrasMinusculas = [
-        "de",
-        "del",
-        "la",
-        "las",
-        "el",
-        "los",
-        "y",
-        "en",
-        "a"
+        "de", "del", "la", "las",
+        "el", "los", "y", "en", "a"
     ];
 
-
     return nombre
-        .toLowerCase()
+        .toLocaleLowerCase("es-CL")
+        .trim()
         .split(/\s+/)
         .map((palabra, indice) => {
 
-            if(
+            if (
                 indice > 0 &&
                 palabrasMinusculas.includes(palabra)
-            ){
-
+            ) {
                 return palabra;
-
             }
 
-            return palabra.charAt(0).toUpperCase() +
-                   palabra.slice(1);
+            const caracteres = Array.from(palabra);
+
+            return caracteres[0].toLocaleUpperCase("es-CL") +
+                   caracteres.slice(1).join("");
 
         })
         .join(" ");
-
 }
-
 
 // ======================================
 // FORMATO COMPLETO DEL PROYECTO
@@ -290,9 +279,8 @@ function mostrarProyectos(){
 
 
 
-    proyectosUsuario.forEach(
-
-        proyecto => {
+    ordenarProyectosPorCodigo(proyectosUsuario).forEach(
+    proyecto => {
 
             const opcion =
                 document.createElement(
@@ -409,10 +397,25 @@ function mostrarProyectosMasVotados(){
     // ======================================
 
     const ranking = [...proyectosUsuario]
-        .sort(
-            (a,b) => b.votos - a.votos
-        )
-        .slice(0,5);
+    .sort((a, b) => {
+
+        // Primero: mayor cantidad de votos
+        const diferenciaVotos =
+            (Number(b.votos) || 0) - (Number(a.votos) || 0);
+
+        if (diferenciaVotos !== 0) {
+            return diferenciaVotos;
+        }
+
+        // En caso de empate: código ascendente
+        return String(a.codigo || "")
+            .localeCompare(
+                String(b.codigo || ""),
+                "es",
+                { numeric: true }
+            );
+    })
+    .slice(0, 5);
 
     // ======================================
     // MOSTRAR TOP 5
