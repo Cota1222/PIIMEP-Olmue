@@ -1203,7 +1203,7 @@ function crearIconoProyecto(proyecto){
                 "
             >
 
-                ${numero}
+                ${proyecto.codigo || ""}
 
             </div>
 
@@ -1211,7 +1211,7 @@ function crearIconoProyecto(proyecto){
 
         iconSize:[
 
-            32,
+            48,
 
             22
 
@@ -1219,7 +1219,7 @@ function crearIconoProyecto(proyecto){
 
         iconAnchor:[
 
-            16,
+            24,
 
             11
 

@@ -248,67 +248,25 @@ if (usuarioActual.rut) {
 
         <div class="detalle-datos">
 
-
-            <!-- CATEGORÍA -->
-
-            <div class="detalle-dato">
-
-                <span class="detalle-label">
-
-                    Categoría
-
-                </span>
-
-                <strong>
-
-                    ${proyecto.subcategoria || ""}
-
-                </strong>
-
-            </div>
-
-
-            <!-- ESTADO -->
-
-            <div class="detalle-dato">
-
-                <span class="detalle-label">
-
-                    Estado
-
-                </span>
-
-                <strong>
-
-                    ${proyecto.estado || ""}
-
-                </strong>
-
-            </div>
-
-
+        
         </div>
 
 
         <!-- ==================================
-             DESCRIPCIÓN
-        ================================== -->
+     DESCRIPCIÓN
+================================== -->
 
-        <div class="detalle-descripcion">
+<div class="detalle-descripcion">
 
-            <span class="detalle-label">
+    <span class="detalle-label">
+        Descripción
+    </span>
 
-                Descripción
+    <p>
+        ${proyecto.descripcion || "Sin descripción disponible."}
+    </p>
 
-            </span>
-
-            <p>
-
-                ${proyecto.descripcion || ""}
-
-            </p>
-
-        </div>
+</div>
 
 
         <!-- ==================================
