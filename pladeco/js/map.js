@@ -1730,10 +1730,9 @@ function obtenerIdentificador(propiedades) {
 }
 
 
+/// ======================================================
+// 8. OBTENER Y NORMALIZAR NOMBRE DEL PROYECTO
 // ======================================================
-// 8. OBTENER NOMBRE DEL PROYECTO
-// ======================================================
-
 
 function obtenerNombreProyecto(propiedades) {
 
@@ -1747,17 +1746,78 @@ function obtenerNombreProyecto(propiedades) {
         return "Proyecto sin nombre registrado";
     }
 
-    const nombre = String(valor)
+    // Limpiar espacios y normalizar texto.
+    let nombre = String(valor)
         .trim()
+        .replace(/\s+/g, " ")
         .toLocaleLowerCase("es-CL");
 
-    // Convertir la primera letra de cada oración a mayúscula,
-    // manteniendo el resto del texto en minúsculas.
-    return nombre.charAt(0).toLocaleUpperCase("es-CL") +
-        nombre.slice(1);
+    // Reemplazar SSR en cualquiera de sus variantes.
+nombre = nombre.replace(
+    /\bssr\b/gi,
+    "Servicios Sanitarios Rurales"
+);
 
+// Reemplazar RSDyA en cualquiera de sus variantes.
+nombre = nombre.replace(
+    /\bRsdya\b/gi,
+    "Residuos Sólidos Domiciliarios y Asimilables"
+);
+// Reemplazar DESAM en cualquiera de sus variantes.
+nombre = nombre.replace(
+    /\bdesam\b/gi,
+    "Departamento de Salud Municipal"
+);
+// Eliminar códigos específicos de ciertos proyectos.
+const idProyecto = String(propiedades.ID_2).trim();
+
+if (idProyecto === "103") {
+    nombre = nombre.replace(/\bP14\b/gi, "");
 }
 
+if (idProyecto === "78") {
+    nombre = nombre.replace(/\bP36\b/gi, "");
+}
+
+// Limpiar espacios que puedan quedar tras eliminar los códigos.
+nombre = nombre.replace(/\s+/g, " ").trim();
+    // Conectores que se mantienen en minúscula.
+    const conectores = [
+        "de",
+        "del",
+        "la",
+        "las",
+        "el",
+        "los",
+        "y",
+        "e",
+        "en",
+        "a",
+        "al",
+        "con",
+        "para",
+        "por",
+        "sobre"
+    ];
+
+    // Capitalizar cada palabra, respetando conectores.
+    nombre = nombre.split(" ").map(function (palabra, indice) {
+
+        if (
+            indice > 0 &&
+            conectores.includes(palabra)
+        ) {
+            return palabra;
+        }
+
+        return palabra.charAt(0).toLocaleUpperCase("es-CL") +
+            palabra.slice(1);
+
+    }).join(" ");
+
+    return nombre;
+
+}
 
 // ======================================================
 // 9. CREAR PROYECTO EN EL MAPA

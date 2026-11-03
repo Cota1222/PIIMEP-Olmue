@@ -1462,6 +1462,7 @@ function agregarProyectosMapa(){
                     geometria,
 
                     {
+                        bubblingMouseEvents: false,
 
                         style:function(){
 
@@ -1549,6 +1550,8 @@ function agregarProyectosMapa(){
                     geometria,
 
                     {
+
+                        bubblingMouseEvents: false,
 
                         style:function(){
 
