@@ -468,7 +468,11 @@ function inicializarMapa(){
         mapa
 
     );
+// ======================================
+// BUSCADOR GEOGRÁFICO PHOTON
+// ======================================
 
+configurarBuscadorDirecciones();
 
     // ======================================
     // CARGAR PARADEROS
@@ -2189,5 +2193,288 @@ function volverVistaInicial(){
     // ======================================
 
     cerrarDetalleProyecto();
+
+}
+
+// ======================================
+// BUSCADOR GEOGRÁFICO PHOTON
+// ======================================
+
+function configurarBuscadorDirecciones() {
+
+    if (!mapa) {
+        console.warn("El mapa no está inicializado.");
+        return;
+    }
+
+    // Evitar controles duplicados.
+    if (document.querySelector(".control-busqueda-photon")) {
+        return;
+    }
+
+    let temporizadorBusqueda = null;
+    let controladorBusqueda = null;
+    let marcadorBusqueda = null;
+
+    const controlBusqueda = L.control({
+        position: "topright"
+    });
+
+    controlBusqueda.onAdd = function () {
+
+        const contenedor = L.DomUtil.create(
+            "div",
+            "control-busqueda-photon"
+        );
+
+        contenedor.innerHTML = `
+            <button
+                type="button"
+                class="boton-lupa-photon"
+                aria-label="Buscar dirección"
+                title="Buscar dirección"
+            >
+                ⌕
+            </button>
+
+            <div class="panel-busqueda-photon" hidden>
+                <input
+                    type="text"
+                    class="input-busqueda-photon"
+                    placeholder="Buscar calle o dirección..."
+                    autocomplete="off"
+                >
+
+                <div class="resultados-busqueda-photon"></div>
+
+                <p class="estado-busqueda-photon"></p>
+            </div>
+        `;
+
+        const boton = contenedor.querySelector(
+            ".boton-lupa-photon"
+        );
+
+        const panel = contenedor.querySelector(
+            ".panel-busqueda-photon"
+        );
+
+        const input = contenedor.querySelector(
+            ".input-busqueda-photon"
+        );
+
+        const resultados = contenedor.querySelector(
+            ".resultados-busqueda-photon"
+        );
+
+        const estado = contenedor.querySelector(
+            ".estado-busqueda-photon"
+        );
+
+        // Evitar que los eventos del buscador lleguen al mapa.
+        L.DomEvent.disableClickPropagation(contenedor);
+        L.DomEvent.disableScrollPropagation(contenedor);
+
+        // Abrir y cerrar buscador.
+        boton.addEventListener("click", function () {
+
+            panel.hidden = !panel.hidden;
+
+            if (!panel.hidden) {
+                input.focus();
+            } else {
+                input.value = "";
+                resultados.innerHTML = "";
+                estado.textContent = "";
+                limpiarMarcador();
+            }
+
+        });
+
+        // Eliminar marcador anterior.
+        function limpiarMarcador() {
+
+            if (marcadorBusqueda) {
+                mapa.removeLayer(marcadorBusqueda);
+                marcadorBusqueda = null;
+            }
+
+        }
+
+        // Construir nombre del resultado.
+        function obtenerNombreLugar(propiedades) {
+
+            const partes = [
+                propiedades.name,
+                propiedades.street,
+                propiedades.housenumber,
+                propiedades.district,
+                propiedades.city,
+                propiedades.state
+            ];
+
+            return [...new Set(
+                partes.filter(Boolean)
+            )].join(", ");
+
+        }
+
+        // Buscar direcciones con Photon.
+        async function buscarDireccion(texto) {
+
+            if (controladorBusqueda) {
+                controladorBusqueda.abort();
+            }
+
+            controladorBusqueda = new AbortController();
+
+            estado.textContent = "Buscando...";
+            resultados.innerHTML = "";
+
+            const parametros = new URLSearchParams({
+                q: texto,
+                lat: "-33.005",
+                lon: "-71.184",
+                limit: "6"
+            });
+
+            try {
+
+                const respuesta = await fetch(
+                    "https://photon.komoot.io/api/?" + parametros,
+                    {
+                        signal: controladorBusqueda.signal
+                    }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("Error consultando Photon.");
+                }
+
+                const datos = await respuesta.json();
+
+                resultados.innerHTML = "";
+
+                if (!datos.features || datos.features.length === 0) {
+                    estado.textContent = "No se encontraron resultados.";
+                    return;
+                }
+
+                estado.textContent = "";
+
+                datos.features.forEach(function (elemento) {
+
+                    const propiedades = elemento.properties;
+                    const coordenadas = elemento.geometry.coordinates;
+
+                    const longitud = coordenadas[0];
+                    const latitud = coordenadas[1];
+
+                    if (
+                        !Number.isFinite(latitud) ||
+                        !Number.isFinite(longitud)
+                    ) {
+                        return;
+                    }
+
+                    const nombre = obtenerNombreLugar(propiedades);
+
+                    const opcion = document.createElement("button");
+
+                    opcion.type = "button";
+                    opcion.className = "opcion-busqueda-photon";
+                    opcion.textContent = nombre || "Ubicación sin nombre";
+
+                    opcion.addEventListener("click", function () {
+
+                        limpiarMarcador();
+
+                        mapa.setView(
+                            [latitud, longitud],
+                            17,
+                            { animate: true }
+                        );
+
+                        marcadorBusqueda = L.marker([
+                            latitud,
+                            longitud
+                        ]).addTo(mapa);
+
+                        marcadorBusqueda.bindPopup(
+                            `<strong>${nombre.replace(/[&<>"']/g, function (caracter) {
+                                return {
+                                    "&": "&amp;",
+                                    "<": "&lt;",
+                                    ">": "&gt;",
+                                    '"': "&quot;",
+                                    "'": "&#39;"
+                                }[caracter];
+                            })}</strong>`
+                        ).openPopup();
+
+                        input.value = nombre;
+                        resultados.innerHTML = "";
+                        estado.textContent = "";
+
+                    });
+
+                    resultados.appendChild(opcion);
+
+                });
+
+            } catch (error) {
+
+                if (error.name === "AbortError") {
+                    return;
+                }
+
+                console.error("Error en buscador Photon:", error);
+                estado.textContent = "No fue posible realizar la búsqueda.";
+
+            }
+
+        }
+
+        // Detectar escritura y aplicar espera antes de consultar.
+        input.addEventListener("input", function () {
+
+            clearTimeout(temporizadorBusqueda);
+
+            const texto = input.value.trim();
+
+            if (texto.length < 3) {
+
+                resultados.innerHTML = "";
+                estado.textContent = "Escribe al menos 3 caracteres.";
+                return;
+
+            }
+
+            temporizadorBusqueda = setTimeout(function () {
+                buscarDireccion(texto);
+            }, 350);
+
+        });
+
+        // Cerrar con Escape.
+        input.addEventListener("keydown", function (evento) {
+
+            if (evento.key === "Escape") {
+                panel.hidden = true;
+                resultados.innerHTML = "";
+                estado.textContent = "";
+                limpiarMarcador();
+            }
+
+        });
+
+        // Si se hace clic en el mapa, retirar marcador.
+        mapa.on("click", limpiarMarcador);
+
+        return contenedor;
+
+    };
+
+    controlBusqueda.addTo(mapa);
 
 }

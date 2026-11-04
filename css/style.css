@@ -2142,16 +2142,17 @@ CONTROLES LEAFLET DERECHA
     }
 
     #panel {
-        order: 0;
-        flex: 0 0 auto;
-        width: 100%;
-        height: auto;
-        padding: 8px 10px;
-        border-right: none;
-        border-bottom: 1px solid var(--gris-borde);
-        overflow: visible;
-        text-align: left;
-    }
+    width: 350px;
+    min-width: 350px;
+    flex: 0 0 350px;
+    box-sizing: border-box;
+
+    background: white;
+    border-right: 1px solid var(--gris-borde);
+    overflow-y: auto;
+    padding: 25px;
+    text-align: center;
+}
 
     /* Por ahora se oculta el ranking visualmente en móvil.
        El selector de proyectos se mantiene disponible. */
@@ -3118,64 +3119,119 @@ LEYENDA DE PROYECTOS
     overflow-wrap: anywhere;
     word-break: normal;
 }
-/* ======================================================
-   AJUSTE DE DIMENSIONES EN DISPOSITIVOS MÓVILES
-   ====================================================== */
 
-html,
-body {
-    width: 100%;
-    min-width: 0;
-    margin: 0;
-    overflow-x: hidden;
+/* ======================================
+   BUSCADOR GEOGRÁFICO PHOTON
+   PIIMEP PARTICIPA
+====================================== */
+
+.control-busqueda-photon {
+    position: relative;
 }
 
-#aplicacion {
-    width: 100%;
-    max-width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    min-width: 0;
-    overflow: hidden;
+.boton-lupa-photon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff;
+    color: #003B6D;
+
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.boton-lupa-photon:hover {
+    background: #f4f7fa;
+}
+
+.panel-busqueda-photon {
+    position: absolute;
+    top: 0;
+    right: 44px;
+
+    width: 290px;
+    padding: 10px;
+
+    background: #fff;
+    border-radius: 6px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+
+    z-index: 1000;
+}
+
+.panel-busqueda-photon[hidden] {
+    display: none;
+}
+
+.input-busqueda-photon {
     box-sizing: border-box;
-}
-
-#header,
-#contenedor,
-#panel,
-#mapa {
-    box-sizing: border-box;
-    min-width: 0;
-}
-
-#contenedor {
     width: 100%;
-    max-width: 100%;
+    min-height: 40px;
+
+    padding: 9px 10px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+
+    font: inherit;
+    font-size: 14px;
+    outline: none;
 }
 
-#mapa {
-    min-width: 0;
-    min-height: 0;
-    flex: 1 1 auto;
+.input-busqueda-photon:focus {
+    border-color: #003B6D;
+    box-shadow: 0 0 0 2px rgba(0, 59, 109, 0.12);
+}
+
+.resultados-busqueda-photon {
+    max-height: 230px;
+    overflow-y: auto;
+    margin-top: 6px;
+}
+
+.opcion-busqueda-photon {
+    display: block;
     width: 100%;
+
+    padding: 9px;
+
+    text-align: left;
+
+    border: 0;
+    border-bottom: 1px solid #eee;
+
+    background: #fff;
+    color: #334155;
+
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
 }
 
-/* Recalcular proporciones en pantallas pequeñas */
-@media (max-width: 600px) {
+.opcion-busqueda-photon:hover {
+    background: #eef5fb;
+}
 
-    #header {
-        width: 100%;
-        max-width: 100%;
+.estado-busqueda-photon {
+    margin: 6px 0 0;
+
+    font-size: 12px;
+    color: #475569;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 480px) {
+
+    .panel-busqueda-photon {
+        width: min(260px, calc(100vw - 100px));
     }
 
-    #panel {
-        width: 100%;
-        max-width: 100%;
-        flex-shrink: 0;
-    }
-
-    #mapa {
-        width: 100%;
-        max-width: 100%;
-    }
 }
