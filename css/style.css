@@ -118,12 +118,6 @@ PANTALLA INFORMATIVA
 
 }
 
-
-
-/* ======================================
-HERO
-====================================== */
-
 /* ======================================
 HERO
 ====================================== */
@@ -658,29 +652,44 @@ BOTÓN FLOTANTE INGRESAR
    ====================================================== */
 
 #aplicacion {
+    position: fixed;
+    inset: 0;
+    width: 100%;
     height: 100vh;
     height: 100dvh;
+
     display: flex;
     flex-direction: column;
+
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
     overflow: hidden;
 }
 
-/* ======================================
+/* ======================================================
    HEADER
-   ====================================== */
+   ====================================================== */
 
 #header {
-    flex: 0 0 70px;
-    height: 70px;
-    background: white;
-    border-bottom: 1px solid var(--gris-borde);
+    flex: 0 0 auto;
+    min-height: 48px;
+    height: auto;
+
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    position: relative;
-    padding: 0 25px;
-}
 
+    position: relative;
+
+    padding: 4px 10px;
+    gap: 8px;
+
+    background: white;
+    border-bottom: 1px solid var(--gris-borde);
+}
 /* ======================================
    LOGO + TÍTULO
    ====================================== */
@@ -777,52 +786,56 @@ BOTÓN FLOTANTE INGRESAR
 
 }
 
-/* ======================================
-   CONTENEDOR
-   ====================================== */
+/* ======================================================
+   CONTENEDOR PRINCIPAL
+   ====================================================== */
 
 #contenedor {
-    flex: 1 1 auto;
-    min-height: 0;
-    min-width: 0;
     display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    position: relative;
     overflow: hidden;
 }
 
 
+/* ======================================================
+   PANEL
+   ====================================================== */
 
-/* ======================================
-PANEL
-====================================== */
+#panel {
+    order: 0;
+    flex: 0 0 350px;
+    width: 350px;
+    min-width: 0;
 
-#panel{
+    box-sizing: border-box;
 
-    width:350px;
+    background: white;
+    border-right: 1px solid var(--gris-borde);
+    border-bottom: none;
 
-    background:white;
-
-    border-right:1px solid var(--gris-borde);
-
-    overflow-y:auto;
-
-    padding:25px;
-
-    text-align:center;
-
+    overflow-y: auto;
+    padding: 25px;
+    text-align: center;
 }
+/* ======================================================
+   MAPA
+   ====================================================== */
 
+#mapa {
+    order: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
 
-
-/* ======================================
-MAPA
-====================================== */
-
-#mapa{
-
-    flex:1;
-
-    position:relative;
-
+    position: relative;
+    isolation: isolate;
 }
 
 
@@ -2133,28 +2146,16 @@ CONTROLES LEAFLET DERECHA
     /* MAPA Y CONTROLES */
 
     #contenedor {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        overflow: hidden;
-    }
+    flex-direction: column;
+}
 
     #panel {
     order: 0;
-    width: 100%;
-    min-width: 0;
     flex: 0 0 auto;
-    box-sizing: border-box;
-
-    background: white;
+    width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--gris-borde);
-
-    overflow: visible;
-    padding: 8px 12px;
-    text-align: center;
+    padding: 4px 10px;
 }
 
     /* Por ahora se oculta el ranking visualmente en móvil.
@@ -2192,10 +2193,8 @@ CONTROLES LEAFLET DERECHA
     order: 1;
     flex: 1 1 0;
     width: 100%;
-    min-width: 0;
     min-height: 0;
-    position: relative;
-    }
+}
 
     /* DETALLE DEL PROYECTO */
 
