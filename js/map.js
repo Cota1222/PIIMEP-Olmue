@@ -2478,3 +2478,24 @@ function configurarBuscadorDirecciones() {
     controlBusqueda.addTo(mapa);
 
 }
+// ======================================
+// CERRAR RESUMEN EJECUTIVO AL TOCAR EL MAPA
+// ======================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const accesoResumen = document.getElementById("acceso-resumen");
+    const contenedorMapa = document.getElementById("mapa");
+
+    if (!accesoResumen || !contenedorMapa) return;
+
+    contenedorMapa.addEventListener("click", function (evento) {
+
+        // No cerrar al interactuar con el propio botón o panel.
+        if (evento.target.closest("#acceso-resumen")) return;
+
+        accesoResumen.open = false;
+
+    });
+
+});

@@ -3235,3 +3235,126 @@ LEYENDA DE PROYECTOS
     }
 
 }
+/* ======================================
+   ACCESO RESUMEN EJECUTIVO PIIMEP
+====================================== */
+
+#acceso-resumen {
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    z-index: 1000;
+    font-family: inherit;
+}
+
+#acceso-resumen summary {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+    color: #34495e;
+
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+
+    cursor: pointer;
+    list-style: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+#acceso-resumen summary::-webkit-details-marker {
+    display: none;
+}
+
+#acceso-resumen summary svg {
+    width: 24px;
+    height: 24px;
+}
+
+#acceso-resumen summary:hover {
+    background: #003B6D;
+    color: #ffffff;
+    transform: scale(1.06);
+}
+
+.panel-resumen {
+    position: absolute;
+    top: 0;
+    left: 44px;
+
+    width: 235px;
+    padding: 15px;
+
+    background: #ffffff;
+    color: #263238;
+
+    border-radius: 10px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.panel-resumen strong {
+    color: #003B6D;
+    font-size: 14px;
+}
+
+.panel-resumen p {
+    margin: 7px 0 12px;
+}
+
+.panel-resumen a {
+    color: #0066a4;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.panel-resumen a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    #acceso-resumen summary {
+        width: 42px;
+        height: 42px;
+    }
+
+    #acceso-resumen summary svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+#acceso-resumen summary {
+    position: relative;
+}
+
+#acceso-resumen summary:hover::after {
+    content: "Resumen Ejecutivo";
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: #003B6D;
+    color: #ffffff;
+
+    padding: 6px 10px;
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
