@@ -2142,15 +2142,18 @@ CONTROLES LEAFLET DERECHA
     }
 
     #panel {
-    width: 350px;
-    min-width: 350px;
-    flex: 0 0 350px;
+    order: 0;
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
     box-sizing: border-box;
 
     background: white;
-    border-right: 1px solid var(--gris-borde);
-    overflow-y: auto;
-    padding: 25px;
+    border-right: none;
+    border-bottom: 1px solid var(--gris-borde);
+
+    overflow: visible;
+    padding: 8px 12px;
     text-align: center;
 }
 
@@ -2165,22 +2168,33 @@ CONTROLES LEAFLET DERECHA
         display: none;
     }
 
-    #selector-proyectos {
-        display: block;
-        width: 100%;
-        margin-top: 0;
-        padding: 10px 12px;
-        min-height: 42px;
-        font-size: 14px;
-        border-radius: 9px;
-    }
+    #proyectos {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#selector-proyectos {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 9px 12px;
+
+    min-height: 40px;
+    font-size: 14px;
+    border-radius: 9px;
+}
 
     #mapa {
-        order: 1;
-        flex: 1 1 auto;
-        width: 100%;
-        min-height: 0;
-        position: relative;
+    order: 1;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
     }
 
     /* DETALLE DEL PROYECTO */
@@ -2249,6 +2263,23 @@ CONTROLES LEAFLET DERECHA
     height:auto;
 
     object-fit:contain;
+
+}
+@media (max-height: 500px) and (orientation: landscape) {
+
+    #header {
+        min-height: 48px;
+        padding: 4px 10px;
+    }
+
+    #panel {
+        padding: 5px 10px;
+    }
+
+    #selector-proyectos {
+        min-height: 34px;
+        padding: 5px 10px;
+    }
 
 }
 /* ======================================================
@@ -3357,4 +3388,112 @@ LEYENDA DE PROYECTOS
 
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
     pointer-events: none;
+}
+/* ======================================
+   MÓVILES EN ORIENTACIÓN HORIZONTAL
+====================================== */
+
+@media (orientation: landscape)
+and (max-height: 600px)
+and (pointer: coarse) {
+
+    #aplicacion {
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #header {
+        flex: 0 0 auto;
+        min-height: 48px;
+        height: auto;
+        padding: 4px 10px;
+        gap: 8px;
+    }
+
+    .titulo-header {
+        flex: 1 1 auto;
+        min-width: 0;
+        gap: 6px;
+    }
+
+    .logo-piimep-app {
+        width: 34px !important;
+        height: 34px !important;
+        max-width: 34px !important;
+        max-height: 34px !important;
+    }
+
+    .texto-header h1 {
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    .acciones-header {
+        flex: 0 0 auto;
+        gap: 4px;
+    }
+
+    #usuario-activo {
+        max-width: 90px;
+        font-size: 9px;
+    }
+
+    #boton-volver-inicio {
+        padding: 6px 8px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    #contenedor {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #panel {
+        order: 0;
+        width: 100%;
+        min-width: 0;
+        flex: 0 0 auto;
+        padding: 4px 10px;
+        overflow: visible;
+        border-right: none;
+        border-bottom: 1px solid var(--gris-borde);
+    }
+
+    .tarjeta-destacada,
+    #proyectos h2 {
+        display: none;
+    }
+
+    #proyectos {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #selector-proyectos {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-height: 34px;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    #mapa {
+        order: 1;
+        flex: 1 1 0;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        position: relative;
+    }
 }
