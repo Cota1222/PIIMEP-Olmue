@@ -3497,3 +3497,18 @@ and (pointer: coarse) {
         position: relative;
     }
 }
+/* ======================================
+   EVITAR ZOOM AUTOMÁTICO EN IOS
+   ====================================== */
+
+@media (max-width: 768px) {
+
+    input,
+    select,
+    textarea {
+
+        font-size: 16px !important;
+
+    }
+
+}
