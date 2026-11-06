@@ -3272,7 +3272,7 @@ LEYENDA DE PROYECTOS
 #acceso-resumen {
     position: absolute;
     top: 80px;
-    left: 10px;
+    left: 50px;
     z-index: 1000;
     font-family: inherit;
 }
@@ -3368,25 +3368,57 @@ LEYENDA DE PROYECTOS
     position: relative;
 }
 
-#acceso-resumen summary:hover::after {
+/* ======================================
+   ETIQUETA RESUMEN EJECUTIVO
+   ====================================== */
+
+#acceso-resumen summary {
+    position: relative;
+}
+
+#acceso-resumen summary::after {
     content: "Resumen Ejecutivo";
+
     position: absolute;
-    left: 50px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: calc(100% + 7px);
+    left: 50%;
 
-    background: #003B6D;
-    color: #ffffff;
+    transform: translateX(-50%);
+    transform-origin: center top;
 
-    padding: 6px 10px;
-    border-radius: 6px;
-
-    font-size: 12px;
-    font-weight: 500;
     white-space: nowrap;
 
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    color: #ffffff;
+    background: #003B6D;
+
+    padding: 4px 7px;
+    border-radius: 5px;
+
     pointer-events: none;
+
+    animation: pulsoResumen 3s ease-in-out infinite;
+}
+
+/* ======================================
+   PULSO SUTIL
+   ====================================== */
+
+@keyframes pulsoResumen {
+    0%, 100% {
+        transform: translateX(-50%) scale(0.98);
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.08);
+        text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.04);
+        box-shadow: 0 0 7px rgba(255, 255, 255, 0.22);
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.35);
+    }
 }
 /* ======================================
    MÓVILES EN ORIENTACIÓN HORIZONTAL
