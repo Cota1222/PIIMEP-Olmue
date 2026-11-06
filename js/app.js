@@ -154,63 +154,57 @@ function iniciarFormulario(){
 
 function ingresarPlataforma(){
 
-    // ======================================
-    // OCULTAR PÁGINA INFORMATIVA
-    // ======================================
-
     const pantallaInformativa =
-        document.getElementById(
-            "pantalla-informativa"
-        );
-
+        document.getElementById("pantalla-informativa");
 
     if(pantallaInformativa){
 
-        pantallaInformativa.classList.add(
-            "oculto"
-        );
+        pantallaInformativa.classList.add("oculto");
 
     }
 
 
-
-    // ======================================
-    // MOSTRAR APLICACIÓN
-    // ======================================
-
     const aplicacion =
-        document.getElementById(
-            "aplicacion"
-        );
+        document.getElementById("aplicacion");
 
+    aplicacion.classList.remove("oculto");
 
-    aplicacion.classList.remove(
-        "oculto"
-    );
-
-
-
-    // ======================================
-    // MOSTRAR USUARIO
-    // ======================================
 
     mostrarUsuario();
 
 
+    // Esperar a que el navegador actualice
+    // las dimensiones del contenedor visible
+    requestAnimationFrame(() => {
 
-    // ======================================
-    // INICIALIZAR MAPA
-    // ======================================
+        requestAnimationFrame(() => {
 
-    inicializarMapa();
+            // Inicializar o reajustar el mapa
+            inicializarMapa();
 
+            // Forzar a Leaflet a recalcular
+            // el tamaño real del contenedor
+            if(mapa){
 
+                mapa.invalidateSize({
 
-    // ======================================
-    // CARGAR PROYECTOS
-    // ======================================
+                    animate:false,
 
-    cargarProyectos();
+                    pan:false,
+
+                    debounceMoveend:true
+
+                });
+
+            }
+
+            // Cargar los proyectos después
+            // de que el mapa esté disponible
+            cargarProyectos();
+
+        });
+
+    });
 
 }
 
