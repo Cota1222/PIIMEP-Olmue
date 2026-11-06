@@ -20,6 +20,9 @@ capas base y visualización de proyectos.
 
 let mapa = null;
 
+// Observador del tamaño del contenedor Leaflet
+let observadorTamanoMapa = null;
+
 let marcadores = [];
 
 let capasProyectos = [];
@@ -132,7 +135,48 @@ function inicializarMapa(){
 
     );
 
+// ======================================
+// OBSERVAR CAMBIOS DE DIMENSIONES
+// DEL CONTENEDOR DEL MAPA
+// ======================================
 
+if(!observadorTamanoMapa){
+
+    const contenedorMapa =
+        document.getElementById("mapa");
+
+    observadorTamanoMapa =
+        new ResizeObserver(function(){
+
+            if(!mapa){
+
+                return;
+
+            }
+
+            requestAnimationFrame(function(){
+
+                mapa.invalidateSize({
+
+                    animate:false,
+
+                    pan:false,
+
+                    debounceMoveend:true
+
+                });
+
+            });
+
+        });
+
+    observadorTamanoMapa.observe(
+
+        contenedorMapa
+
+    );
+
+}
     // ======================================
     // VISTA INICIAL
     // ======================================
