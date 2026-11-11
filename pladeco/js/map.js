@@ -231,17 +231,17 @@ async function obtenerTotalApoyos(tipo, elementoId) {
     }
 
     const { data, error } = await supabaseCliente
-        .from("v_apoyos_conteo")
-        .select("total_apoyos")
-        .eq("tipo_elemento", tipo)
-        .eq("elemento_id", String(elementoId))
-        .maybeSingle();
+        .rpc("obtener_conteo_apoyos", {
+            p_tipo_elemento: tipo,
+            p_elemento_id: String(elementoId)
+        });
 
     if (error) {
+        console.error("Error obteniendo total de apoyos:", error);
         throw error;
     }
 
-    return Number(data?.total_apoyos ?? 0);
+    return Number(data ?? 0);
 }
 
 
@@ -650,7 +650,7 @@ function mostrarPopupIniciativa(registro) {
         : "Sin referencia de ubicación.";
 
     const contenido = `
-        <div class="popup-proyecto popup-con-apoyo">
+        <div class="popup-proyecto popup-con-apoyo popup-iniciativa">
 
             <div class="popup-proyecto-encabezado">
 
@@ -720,16 +720,17 @@ function mostrarPopupIniciativa(registro) {
     .setContent(contenido)
     .openOn(mapa);
 
-    const popupAbierto = mapa.getPopup();
+    const elementoPopup = document.querySelector(
+    ".leaflet-popup-content"
+);
 
-    if (popupAbierto) {
-        prepararBotonApoyo(
-            "iniciativa",
-            registro.id,
-            popupAbierto.getElement()
-        );
-    }
-
+if (elementoPopup) {
+    prepararBotonApoyo(
+        "iniciativa",
+        registro.id,
+        elementoPopup
+    );
+}
 }
 
 
@@ -2302,8 +2303,6 @@ if (
     // ======================================
 // MOSTRAR POPUP DEL PROYECTO
 // ======================================
-
-
 
 const contenidoPopup = `
     <div class="popup-proyecto popup-con-apoyo">
