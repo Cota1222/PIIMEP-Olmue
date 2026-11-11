@@ -1188,27 +1188,38 @@ capaIniciativasEnviadas = L.featureGroup().addTo(mapa);
 
 
     // --------------------------------------------------
-    // CONTROL DE CAPAS
-    // --------------------------------------------------
+// CONTROL DE CAPAS
+// --------------------------------------------------
 
-    L.control.layers(
-        {
-            "🛰️ Satélite": capaSatelital,
-            "🗺️ Calles": capaCalles
-        },
-        {
-            "📍 Proyectos municipales": capaProyectosMunicipales,
-            "🔢 Identificadores": capaEtiquetasProyectos,
-            "🟢 Iniciativas vecinales": capaIniciativasVecinales,
-            "Límite comunal de Olmué": capaLimiteComunal
-        },
-        {
-            position: "topright",
-            collapsed: true
-        }
-    ).addTo(mapa);
+// --------------------------------------------------
+// GRUPO DE PROYECTOS MUNICIPALES
+// --------------------------------------------------
+
+const grupoProyectosMunicipales = L.layerGroup([
+    capaProyectosMunicipales,
+    capaEtiquetasProyectos
+]).addTo(mapa);
 
 
+// --------------------------------------------------
+// CONTROL DE CAPAS
+// --------------------------------------------------
+
+L.control.layers(
+    {
+        "🛰️ Satélite": capaSatelital,
+        "🗺️ Calles": capaCalles
+    },
+    {
+        "Proyectos municipales": grupoProyectosMunicipales,
+        "Iniciativas vecinales": capaIniciativasVecinales,
+        "Límite comunal de Olmué": capaLimiteComunal
+    },
+    {
+        position: "topright",
+        collapsed: true
+    }
+).addTo(mapa);
     // --------------------------------------------------
     // CAMBIAR ETIQUETAS SEGÚN MAPA BASE
     // --------------------------------------------------
