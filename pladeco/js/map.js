@@ -670,7 +670,9 @@ function mostrarPopupIniciativa(registro) {
                 ${escaparHTML(registro.nombre)}
             </div>
 
-            <p>${descripcion}</p>
+            <div class="popup-descripcion">
+    ${descripcion}
+</div>
 
             <p>
                 <strong>Ubicación:</strong>
@@ -711,11 +713,11 @@ function mostrarPopupIniciativa(registro) {
     }
 
     L.popup({
-        maxWidth: 320,
-        minWidth: 220,
-        autoPan: true,
-        closeButton: true
-    })
+    maxWidth: 420,
+    minWidth: 280,
+    autoPan: true,
+    closeButton: true
+})
     .setLatLng(limites.getCenter())
     .setContent(contenido)
     .openOn(mapa);

@@ -2479,3 +2479,26 @@ button:focus-visible {
     background: #DEE8DF;
     transform: scale(0.98);
 }
+/* DESCRIPCIÓN LARGA EN POPUPS DE INICIATIVAS */
+.popup-descripcion {
+    max-height: 130px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 10px 0;
+    padding-right: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Ancho adaptable del contenido del popup */
+.leaflet-popup-content {
+    max-width: min(380px, 70vw);
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 480px) {
+    .leaflet-popup-content {
+        max-width: 260px;
+    }
+}
